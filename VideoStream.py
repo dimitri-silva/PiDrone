@@ -19,7 +19,7 @@ class VideoCapture(threading.Thread):
     # Connect a client socket to my_server:8000 (change my_server to the
     # hostname of your server)
     def __init__(self, dest, group=None, target=None, name=None, verbose=None, port=1000, record=False):
-        super().__init__(group=group, target=target, name=name, verbose=verbose)
+        super().__init__(group=group, target=target, name=name)
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.DEST = (dest, port)
         self.record = record
