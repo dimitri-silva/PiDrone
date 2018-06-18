@@ -58,12 +58,12 @@ class VideoCapture(threading.Thread):
         return image
 
     def recordLaunch(self):
-        self.camera.start_recording('Videos/launch.h264', splitter_port=3, format='h264',
+        self.camera.start_recording('launch.h264', splitter_port=3, format='h264',
                                     bitrate=3000000)
 
     def stopRecordLaunchAndTransmit(self):
         self.camera.stop_recording(splitter_port=3)
         ff = ffmpy.FFmpeg(global_options='-framerate 15',
-                          inputs={'Videos/launch.h264': None},
-                          outputs={'Videos/launch.mp4': '-c:v copy -f mp4'})
+                          inputs={'launch.h264': None},
+                          outputs={'launch.mp4': '-c:v copy -f mp4'})
         ff.run()
