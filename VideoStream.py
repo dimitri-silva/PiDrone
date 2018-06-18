@@ -1,14 +1,15 @@
 import socket
 import threading
 import time
-
+import ffmpy
 import numpy
 import picamera
 
 
 class CameraBuffer:
-    def __init__(self, sock):
+    def __init__(self, sock, DEST):
         self.sock = sock
+        self.DEST = DEST
 
     def write(self, buf):
         self.sock.sendto(buf, self.DEST)
@@ -18,15 +19,14 @@ class VideoCapture(threading.Thread):
     # Connect a client socket to my_server:8000 (change my_server to the
     # hostname of your server)
     def __init__(self, dest, group=None, target=None, name=None, verbose=None, port=1000, record=False):
-        super().__init__(self, group=group, target=target, name=name,
-                         verbose=verbose)
+        super().__init__(group=group, target=target, name=name, verbose=verbose)
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.DEST = (dest, port)
         self.record = record
         self.camera = picamera.PiCamera()
         self.camera.resolution = (1280, 720)
         self.camera.framerate = 15
-        self.outputStream = CameraBuffer(self.server_socket)
+        self.outputStream = CameraBuffer(self.server_socket, self.DEST)
 
     def run(self):
         try:
@@ -56,3 +56,14 @@ class VideoCapture(threading.Thread):
         image = numpy.empty((720 * 1280 * 3,), dtype=numpy.uint8)
         self.camera.capture(image, 'rgb', splitter_port=0)
         return image
+
+    def recordLaunch(self):
+        self.camera.start_recording('Videos/launch.h264', splitter_port=3, format='h264',
+                                    bitrate=3000000)
+
+    def stopRecordLaunchAndTransmit(self):
+        self.camera.stop_recording(splitter_port=3)
+        ff = ffmpy.FFmpeg(global_options='-framerate 15',
+                          inputs={'Videos/launch.h264': None},
+                          outputs={'Videos/launch.mp4': '-c:v copy -f mp4'})
+        ff.run()
