@@ -32,7 +32,7 @@ class VideoCapture(threading.Thread):
         try:
             timestr = time.strftime("%Y%m%d-%H%M%S")
             if self.record:
-                self.camera.start_recording('Videos/recording_' + timestr + '.h264', splitter_port=1, format='h264',
+                self.camera.start_recording('recording_' + timestr + '.h264', splitter_port=1, format='h264',
                                             bitrate=3000000)
                 print('Video Recording Started')
             self.camera.start_recording(self.outputStream, format='h264', splitter_port=2, resize=(854, 480),
@@ -63,7 +63,22 @@ class VideoCapture(threading.Thread):
 
     def stopRecordLaunchAndTransmit(self):
         self.camera.stop_recording(splitter_port=3)
-        ff = ffmpy.FFmpeg(global_options='-framerate 15',
+        ff = ffmpy.FFmpeg(global_options='-framerate 15 -y',
                           inputs={'launch.h264': None},
                           outputs={'launch.mp4': '-c:v copy -f mp4'})
         ff.run()
+        self.sendFile('launch.mp4')
+
+    def sendFile(self, name):
+        s = socket.socket()
+        s.bind(('0.0.0.0', 50000))
+        s.listen(5)
+
+        conn, addr = s.accept()  # Establish connection with client.
+        f = open(name, 'rb')
+        l = f.read(1024)
+        while (l):
+            conn.send(l)
+            l = f.read(1024)
+        f.close()
+        conn.close()
