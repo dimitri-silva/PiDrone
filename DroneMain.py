@@ -7,5 +7,6 @@ cap.start()
 
 cap.recordLaunch()
 time.sleep(10)
+print("Stopping Recording")
 cap.stopRecordLaunchAndTransmit()
 print("Done")
