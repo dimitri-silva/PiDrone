@@ -4,6 +4,7 @@ import time
 import ffmpy
 import numpy
 import picamera
+from click import File
 
 
 class CameraBuffer:
@@ -38,7 +39,7 @@ class VideoCapture(threading.Thread):
             self.camera.start_recording(self.outputStream, format='h264', splitter_port=2, resize=(854, 480),
                                         bitrate=500000)
             print('Video Stream Started')
-            self.camera.wait_recording(100000, splitter_port=2)
+            self.camera.wait_recording(1000000, splitter_port=2)
         finally:
             if self.record:
                 self.camera.stop_recording(splitter_port=1)
@@ -59,21 +60,17 @@ class VideoCapture(threading.Thread):
 
     def recordLaunch(self):
         self.camera.start_recording('launch.h264', splitter_port=3, format='h264',
-                                    bitrate=3000000)
+                                    bitrate=5000000)
 
     def stopRecordLaunchAndTransmit(self):
         self.camera.stop_recording(splitter_port=3)
-        ff = ffmpy.FFmpeg(global_options='-framerate 15 -y',
-                          inputs={'launch.h264': None},
-                          outputs={'launch.mp4': '-c:v copy -f mp4'})
-        ff.run()
+        self.processVideo('launch')
         self.sendFile('launch.mp4')
 
     def sendFile(self, name):
         s = socket.socket()
         s.bind(('0.0.0.0', 50000))
-        s.listen(5)
-
+        s.listen(1)
         conn, addr = s.accept()  # Establish connection with client.
         f = open(name, 'rb')
         l = f.read(1024)
@@ -82,3 +79,30 @@ class VideoCapture(threading.Thread):
             l = f.read(1024)
         f.close()
         conn.close()
+
+    def listVideos(self):
+        list_videos = []
+        path_videos = 'Videos/'
+        videos = numpy.os.listdir(path_videos)
+        for video_file in videos[:]:
+            if not (video_file.endswith(".h264")):
+                videos.remove(video_file)
+            else:
+                list_videos.append(
+                    File("NAME", path_videos + video_file,
+                         time.ctime(numpy.os.path.getctime(path_videos + video_file))))
+        json_videos = '['
+        for i, file in enumerate(list_videos):
+            s = len(list_videos) - 1
+            json_videos += '{"videoPath": "' + file.path + '","name": "' + file.name + '", "date": "' + file.date + '"}'
+            if i != s:
+                json_videos += ','
+        json_videos += ']'
+        return json_videos
+
+    def processVideo(self, name):
+        ff = ffmpy.FFmpeg(global_options='-framerate 15 -y',
+                          inputs={name +'.h264': None},
+                          outputs={name + '.mp4': '-c:v copy -f mp4'})
+        ff.run()
+        self.sendFile(name)
