@@ -47,9 +47,7 @@ def onMessageVideo(client, userdata, message):
         print("Sending Done Message")
         client.publish((videoResponseTopic + requestID), payload='videoConvertDone', qos=0, retain=False)
         print("Sending File")
-        t = threading.Thread(target=cap.sendFile('launch.mp4'))
-        t.setDaemon(True)
-        t.start()
+        cap.sendFile('launch.mp4')
         print("Done")
     elif code == "videos":
         vidList = cap.listVideos()
