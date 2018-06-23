@@ -21,7 +21,7 @@ class Video(threading.Thread):
         clientVideo.on_message = self.on_message
         clientVideo.on_publish = self.on_publish
         clientVideo.connect("192.168.1.102", 1883, 60)
-        clientVideo.subscribe("videoRecord", 0)
+        clientVideo.subscribe("videoRequest", 0)
         while clientVideo.loop() == 0:
             pass
 
@@ -58,9 +58,11 @@ def on_message_video(mosq, obj, msg):
             print("Stopping Recording")
             cap.stopRecordLaunchAndTransmit()
             print("Done")
-            
-def on_publish(mosq, obj, mid):
-        pass
+        elif code=="videos":
+            vidList = cap.listVideos()
+            mosq.publish("videoReply", payload=vidList, qos=0, retain=False)
+
+
 
 def on_message_drone(mosq,obj,msg):
     print ("%s" % ( msg.payload))
@@ -80,8 +82,8 @@ if __name__ == '__main__':
     GS_IP = '192.168.1.65'
     cap = VideoCapture(GS_IP)
     cap.start()    
-    video = Video(on_message_video, on_publish)
+    video = Video(on_message_video)
     video.start()
-    drone = Drone(on_message_drone, on_publish)
+    drone = Drone(on_message_drone)
     drone.start()
     
