@@ -89,7 +89,7 @@ class VideoCapture(threading.Thread):
     def listVideos(self):
         list_videos = []
         path_videos = 'Videos/'
-        videos = numpy.os.listdir(path_videos)
+        videos = os.listdir(path_videos)
         for video_file in videos[:]:
             if not (video_file.endswith(".h264")):
                 videos.remove(video_file)
