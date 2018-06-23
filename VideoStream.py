@@ -68,10 +68,12 @@ class VideoCapture(threading.Thread):
         self.sendFile('launch.mp4')
 
     def sendFile(self, name):
-        s = socket.socket()
-        s.bind(('0.0.0.0', 50000))
-        s.listen(1)
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.bind(('0.0.0.0', 30000))
+        s.listen(0)
         conn, addr = s.accept()  # Establish connection with client.
+        print('conn')
         f = open(name, 'rb')
         l = f.read(1024)
         while (l):
@@ -79,6 +81,9 @@ class VideoCapture(threading.Thread):
             l = f.read(1024)
         f.close()
         conn.close()
+        s.shutdown(2)
+        s.close()
+        print('done')
 
     def listVideos(self):
         list_videos = []
@@ -105,4 +110,3 @@ class VideoCapture(threading.Thread):
                           inputs={name +'.h264': None},
                           outputs={name + '.mp4': '-c:v copy -f mp4'})
         ff.run()
-        self.sendFile(name)

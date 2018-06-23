@@ -48,7 +48,6 @@ cap = None
 def on_message_video(mosq, obj, msg):
         print ("%s" % ( msg.payload))
         print('im mosquito')
-        print(GS_IP)
         code=msg.payload.decode("utf-8")
         print("got new messaage")
         if code=="start":
