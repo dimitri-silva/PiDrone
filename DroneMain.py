@@ -36,7 +36,7 @@ def onMessageVideo(client, userdata, message):
     print("Received a request on topic " + requestTopic + ".")
 
     code = message.payload.decode("utf-8")
-    print("got new messaage")
+    print(code)
     if code == "start":
         print("started video")
         cap.recordLaunch()
