@@ -69,8 +69,9 @@ class VideoCapture(threading.Thread):
         #self.sendFile('launch.mp4')
 
     def sendFile(self, name):
-        threading.Thread(target=self.sendFileAssist, args=(name,))
-        
+        t = threading.Thread(target=self.sendFileAssist, args=(name,))
+        t.start()
+
     def sendFileAssist(self, name):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
