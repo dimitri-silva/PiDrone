@@ -40,11 +40,13 @@ def onMessageVideo(client, userdata, message):
     if code == "start":
         print("started video")
         cap.recordLaunch()
+        client.publish((videoResponseTopic + requestID), payload='done', qos=0, retain=False)
     elif code == "stop":
         print("Stopping Recording")
         cap.stopRecordLaunchAndProcess()
         client.publish((videoResponseTopic + requestID), payload='done', qos=0, retain=False)
-        cap.sendFile('launch.mp4')
+        print("Sending File")
+        threading.Thread(target=cap.sendFile('launch.mp4'))
         print("Done")
     elif code == "videos":
         vidList = cap.listVideos()
