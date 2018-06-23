@@ -40,19 +40,19 @@ def onMessageVideo(client, userdata, message):
     if code == "start":
         print("started video")
         cap.recordLaunch()
-        client.publish((videoResponseTopic + requestID), payload='done', qos=0, retain=False)
+        client.publish((videoResponseTopic + requestID), payload='done', qos=1, retain=False)
     elif code == "stop":
         print("Stopping Recording")
         cap.stopRecordLaunchAndProcess()
         print("Sending Done Message" + requestID)
-        client.publish((videoResponseTopic + requestID), payload='videoConvertDone', qos=0, retain=False)
+        client.publish((videoResponseTopic + requestID), payload='videoConvertDone', qos=1, retain=True)
         print("Sending File")
         cap.sendFile('launch.mp4')
         print("Done")
     elif code == "videos":
         vidList = cap.listVideos()
         print('Sending vidList ' + str(vidList))
-        client.publish((videoResponseTopic + requestID), payload=vidList, qos=0, retain=False)
+        client.publish((videoResponseTopic + requestID), payload=vidList, qos=1, retain=False)
 
 
 #
