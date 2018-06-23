@@ -44,7 +44,7 @@ def onMessageVideo(client, userdata, message):
     elif code == "stop":
         print("Stopping Recording")
         cap.stopRecordLaunchAndProcess()
-        print("Sending Done Message")
+        print("Sending Done Message" + requestID)
         client.publish((videoResponseTopic + requestID), payload='videoConvertDone', qos=0, retain=False)
         print("Sending File")
         cap.sendFile('launch.mp4')
