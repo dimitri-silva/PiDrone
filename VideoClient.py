@@ -1,7 +1,7 @@
 import socket                   # Import socket module
 
 s = socket.socket()             # Create a socket object
-s.connect(('192.168.1.102', 50000))
+s.connect(('192.168.1.102', 30000))
 with open('received_file.mp4', 'wb') as f:
     print ('file opened')
     while True:

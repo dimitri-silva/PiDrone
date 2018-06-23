@@ -5,6 +5,7 @@ import ffmpy
 import numpy
 import picamera
 from click import File
+import os
 
 
 class CameraBuffer:
@@ -95,7 +96,7 @@ class VideoCapture(threading.Thread):
             else:
                 list_videos.append(
                     File("NAME", path_videos + video_file,
-                         time.ctime(numpy.os.path.getctime(path_videos + video_file))))
+                         time.ctime(os.path.getctime(path_videos + video_file))))
         json_videos = '['
         for i, file in enumerate(list_videos):
             s = len(list_videos) - 1
