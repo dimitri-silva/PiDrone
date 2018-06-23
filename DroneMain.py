@@ -21,7 +21,7 @@ class Video(threading.Thread):
         clientVideo.on_message = self.on_message
         clientVideo.on_publish = self.on_publish
         clientVideo.connect("192.168.1.102", 1883, 60)
-        clientVideo.subscribe("videoRecord", 0)
+        clientVideo.subscribe("videoRequest", 0)
         while clientVideo.loop() == 0:
             pass
 
@@ -58,7 +58,10 @@ def on_message_video(mosq, obj, msg):
             print("Stopping Recording")
             cap.stopRecordLaunchAndTransmit()
             print("Done")
-            
+        elif code=="videos":
+            vidList = cap.listVideos()
+            mosq.publish("videoReply", payload=vidList, qos=0, retain=False)
+
 def on_publish(mosq, obj, mid):
         pass
 
