@@ -62,10 +62,10 @@ class VideoCapture(threading.Thread):
         self.camera.start_recording('launch.h264', splitter_port=3, format='h264',
                                     bitrate=5000000)
 
-    def stopRecordLaunchAndTransmit(self):
+    def stopRecordLaunchAndProcess(self):
         self.camera.stop_recording(splitter_port=3)
         self.processVideo('launch')
-        self.sendFile('launch.mp4')
+        #self.sendFile('launch.mp4')
 
     def sendFile(self, name):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
