@@ -47,6 +47,7 @@ def onMessageVideo(client, userdata, message):
         print("Sending File")
         t = threading.Thread(target=cap.sendFile('launch.mp4'))
         t.setDaemon(True)
+        t.start()
         client.publish((videoResponseTopic + requestID), payload='videoConvertDone', qos=0, retain=False)
         print("Done")
     elif code == "videos":
