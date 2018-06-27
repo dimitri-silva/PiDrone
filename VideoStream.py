@@ -60,7 +60,7 @@ class VideoCapture(threading.Thread):
 
     def record(self, name):
         if not self.recording:
-            self.camera.start_recording('recording_' + name + '.h264', splitter_port=1, format='h264',
+            self.camera.start_recording("Videos/" + name + '.h264', splitter_port=1, format='h264',
                                         bitrate=3000000)
             self.recording = True
             return True
@@ -75,7 +75,7 @@ class VideoCapture(threading.Thread):
 
     def recordLaunch(self, name):
         if not self.recordingLaunch:
-            self.camera.start_recording("Videos/" + name + '.h264', splitter_port=3, format='h264',
+            self.camera.start_recording(name + '.h264', splitter_port=3, format='h264',
                                         bitrate=5000000)
             self.launchName = name
             self.recordingLaunch = True
