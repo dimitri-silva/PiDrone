@@ -15,7 +15,7 @@ class Video(threading.Thread):
         self.on_publish = on_publish
 
     def run(self):
-        print('hi')
+        print('Starting broker client')
         clientVideo = paho.Client()
         clientVideo.on_message = self.on_message
         clientVideo.on_publish = self.on_publish
@@ -48,6 +48,7 @@ cap = None
 
 
 def on_message_video(mosq, obj, msg):
+    print("Message")
     dict = json.loads(msg.payload.decode("utf-8"))
     print("Received new message on video topic: " + str(dict))
     if dict["type"] == "start_recording_launch":
