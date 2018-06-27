@@ -67,7 +67,7 @@ class VideoCapture(threading.Thread):
         return False
 
     def stopRecord(self):
-        if self.recordingLaunch:
+        if self.recording:
             self.camera.stop_recording(splitter_port=1)
             self.recording = False
             return True
