@@ -34,7 +34,6 @@ class VideoCapture(threading.Thread):
 
     def run(self):
         try:
-            timestr = time.strftime("%Y%m%d-%H%M%S")
             self.camera.start_recording(self.outputStream, format='h264', splitter_port=2, resize=(854, 480),
                                         bitrate=500000)
             print('Video Stream Started')
@@ -76,7 +75,7 @@ class VideoCapture(threading.Thread):
 
     def recordLaunch(self, name):
         if not self.recordingLaunch:
-            self.camera.start_recording(name + '.h264', splitter_port=3, format='h264',
+            self.camera.start_recording("Videos/" + name + '.h264', splitter_port=3, format='h264',
                                         bitrate=5000000)
             self.launchName = name
             self.recordingLaunch = True

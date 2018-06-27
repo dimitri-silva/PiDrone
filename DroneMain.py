@@ -74,7 +74,7 @@ def on_message_video(mosq, obj, msg):
         vidList = cap.listVideos()
         mosq.publish("videoReply", payload=vidList, qos=2, retain=False)
     elif dict["type"] == "start_recording_main":
-        if cap.record():
+        if cap.record(dict['name']):
             print("Main Recording Started")
         else:
             print("Main Recording is already running")
@@ -88,7 +88,7 @@ def on_message_video(mosq, obj, msg):
             print("Main Recording is already stopped")
     elif dict["type"] == "process_video":
         print("Processing video")
-        cap.processVideo(dict['name'])
+        cap.processVideo('Videos/' + dict['name'])
         mosq.publish("GS_TOPIC", payload='{"type": "video_ready_for_transmit", "name": "' + dict['name'] + '"}', qos=2,
                      retain=True)
         print("Sending video file")
