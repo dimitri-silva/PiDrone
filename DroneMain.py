@@ -52,7 +52,7 @@ def on_message_video(mosq, obj, msg):
     dict = json.loads(msg.payload.decode("utf-8"))
     print("Received new message on video topic: " + str(dict))
     if dict["type"] == "start_recording_launch":
-        if cap.recordLaunch():
+        if cap.recordLaunch(dict["name"]):
             print("Launch Recording Started")
         else:
             print("Launch Recording is already running")
