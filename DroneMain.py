@@ -59,7 +59,7 @@ def on_message_video(mosq, obj, msg):
     elif dict["type"] == "stop_recording_launch":
         name = cap.stopRecordLaunch()
         if name:
-            mosq.publish("GS_TOPIC", payload='{"type": "video_ready_for_transmit", "name": "' + name + '"}', qos=2,
+            mosq.publish("GS_TOPIC", payload='{"type": "launch_ready_for_transmit", "name": "' + name + '"}', qos=2,
                          retain=True)
             cap.sendFile(name + '.mp4')
             print("Launch Recording Stopped")
