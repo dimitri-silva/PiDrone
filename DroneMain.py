@@ -80,7 +80,7 @@ def on_message_video(mosq, obj, msg):
             print("Main Recording is already running")
     elif dict["type"] == "stop_recording_main":
         if cap.stopRecord():
-            mosq.publish("GS_TOPIC", payload='{"type": "video_list_updated", "list":' + str(cap.listVideos()) + ' "}',
+            mosq.publish("GS_TOPIC", payload='{"type": "video_list_updated", "list":' + str(cap.listVideos()) + ' }',
                          qos=2,
                          retain=False)
             print("Main Recording Stopped")
