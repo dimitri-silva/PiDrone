@@ -21,6 +21,9 @@ class Video(threading.Thread):
         clientVideo.on_publish = self.on_publish
         clientVideo.connect("192.168.1.102", 1883, 60)
         clientVideo.subscribe("videoRequest", 0)
+        clientVideo.publish("GS_TOPIC", payload='{"type": "video_list_updated", "list":' + str(cap.listVideos()) + ' "}',
+                     qos=2,
+                     retain=True)
         while clientVideo.loop() == 0:
             pass
 
@@ -75,6 +78,8 @@ def on_message_video(mosq, obj, msg):
             print("Main Recording is already running")
     elif dict["type"] == "stop_recording_main":
         if cap.stopRecord():
+            mosq.publish("GS_TOPIC", payload='{"type": "video_list_updated", "list":'+ str(cap.listVideos()) + ' "}', qos=2,
+                         retain=False)
             print("Main Recording Stopped")
         else:
             print("Main Recording is already stopped")
@@ -89,7 +94,6 @@ def on_message_video(mosq, obj, msg):
 
 def on_publish(mosq, obj, mid):
     pass
-
 
 def on_message_drone(mosq, obj, msg):
     print("%s" % (msg.payload))
