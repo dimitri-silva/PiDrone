@@ -20,11 +20,13 @@ class CameraBuffer:
 class VideoCapture(threading.Thread):
     # Connect a client socket to my_server:8000 (change my_server to the
     # hostname of your server)
-    def __init__(self, dest, group=None, target=None, name=None, verbose=None, port=1000, record=False):
+    def __init__(self, dest, group=None, target=None, name=None, verbose=None, port=1000):
         super().__init__(group=group, target=target, name=name)
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.DEST = (dest, port)
-        self.record = record
+        self.recording = False
+        self.recordingLaunch = False
+        self.launchName = None
         self.camera = picamera.PiCamera()
         self.camera.resolution = (1280, 720)
         self.camera.framerate = 15
@@ -33,17 +35,15 @@ class VideoCapture(threading.Thread):
     def run(self):
         try:
             timestr = time.strftime("%Y%m%d-%H%M%S")
-            if self.record:
-                self.camera.start_recording('recording_' + timestr + '.h264', splitter_port=1, format='h264',
-                                            bitrate=3000000)
-                print('Video Recording Started')
             self.camera.start_recording(self.outputStream, format='h264', splitter_port=2, resize=(854, 480),
                                         bitrate=500000)
             print('Video Stream Started')
             self.camera.wait_recording(1000000, splitter_port=2)
         finally:
-            if self.record:
+            if self.recording:
                 self.camera.stop_recording(splitter_port=1)
+            if self.recordingLaunch:
+                self.camera.stop_recording(splitter_port=3)
             self.camera.stop_recording(splitter_port=2)
             self.server_socket.close()
 
@@ -59,14 +59,38 @@ class VideoCapture(threading.Thread):
         self.camera.capture(image, 'rgb', splitter_port=0)
         return image
 
-    def recordLaunch(self):
-        self.camera.start_recording('launch.h264', splitter_port=3, format='h264',
-                                    bitrate=5000000)
+    def record(self, name):
+        if not self.recording:
+            self.camera.start_recording('recording_' + name + '.h264', splitter_port=1, format='h264',
+                                        bitrate=3000000)
+            self.recording = True
+            return True
+        return False
 
-    def stopRecordLaunchAndProcess(self):
-        self.camera.stop_recording(splitter_port=3)
-        self.processVideo('launch')
-        #self.sendFile('launch.mp4')
+    def stopRecord(self):
+        if self.recordingLaunch:
+            self.camera.stop_recording(splitter_port=1)
+            self.recordingLaunch = False
+            return True
+        return False
+
+    def recordLaunch(self, name):
+        if not self.recordingLaunch:
+            self.camera.start_recording(name + '.h264', splitter_port=3, format='h264',
+                                        bitrate=5000000)
+            self.launchName = name
+            self.recordingLaunch = True
+            return True
+        return False
+
+    def stopRecordLaunch(self):
+        if self.recordingLaunch:
+            self.camera.stop_recording(splitter_port=3)
+            self.processVideo(self.launchName)
+            name = self.launchName
+            self.launchName = None
+            return name
+        return None
 
     def sendFile(self, name):
         t = threading.Thread(target=self.sendFileAssist, args=(name,))
@@ -112,6 +136,6 @@ class VideoCapture(threading.Thread):
 
     def processVideo(self, name):
         ff = ffmpy.FFmpeg(global_options='-framerate 15 -y',
-                          inputs={name +'.h264': None},
+                          inputs={name + '.h264': None},
                           outputs={name + '.mp4': '-c:v copy -f mp4'})
         ff.run()

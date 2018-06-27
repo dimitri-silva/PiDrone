@@ -1,13 +1,10 @@
-import json
-import request
 import paho.mqtt.client as paho
 from VideoStream import VideoCapture
-
-
+import MSP_Thread
 import threading
-import memcache
-import time
 import json
+import UdpServer
+import UdpController
 class Video(threading.Thread):
 
     def __init__(self, on_message, on_publish):
@@ -48,18 +45,18 @@ cap = None
 def on_message_video(mosq, obj, msg):
         print ("%s" % ( msg.payload))
         print('im mosquito')
-        code=msg.payload.decode("utf-8")
+        dict=json.loads(msg.payload.decode("utf-8"))
         print("got new messaage")
-        if code=="start":
+        if dict["module_type"]=="start":
             print("started video")
             cap.recordLaunch()
-        elif code=="stop":
+        elif dict["module_type"]=="stop":
             print("stopping video")
             print("Stopping Recording")
             cap.stopRecordLaunchAndProcess()
             cap.sendFile('launch.mp4')
             print("Done")
-        elif code=="videos":
+        elif dict["module_type"]=="videos":
             vidList = cap.listVideos()
             mosq.publish("videoReply", payload=vidList, qos=0, retain=False)
 
@@ -79,13 +76,33 @@ def on_message_drone(mosq,obj,msg):
         print("stopping")
 
 
+class ControllerThread(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+
+    def run(self):
+       UdpController.udp_server()
+
+class UDPServerThread(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+
+    def run(self):
+       UdpServer.runServer()
 
 if __name__ == '__main__':
-    GS_IP = '192.168.1.65'
+
+   # MSP_Thread.start_sending()
+    controller = ControllerThread()
+    controller.start()
+    server = UDPServerThread()
+    server.start()
+
+    GS_IP = '192.168.1.114'
     cap = VideoCapture(GS_IP)
-    cap.start()    
+    cap.start()
     video = Video(on_message_video, on_publish)
     video.start()
     drone = Drone(on_message_drone, on_publish)
     drone.start()
-    
+
