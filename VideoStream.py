@@ -116,7 +116,7 @@ class VideoCapture(threading.Thread):
 
     def listVideos(self):
         list_videos = []
-        path_videos = 'Videos/'
+        path_videos = 'Videos'
         videos = os.listdir(path_videos)
         for video_file in videos[:]:
             if not (video_file.endswith(".h264")):
