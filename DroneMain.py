@@ -21,6 +21,7 @@ class Video(threading.Thread):
         clientVideo.on_publish = self.on_publish
         clientVideo.connect("192.168.1.102", 1883, 60)
         clientVideo.subscribe("videoRequest", 0)
+        print(cap.listVideos())
         clientVideo.publish("GS_TOPIC",
                             payload='{"type": "video_list_updated", "list":' + str(cap.listVideos()) + '}',
                             qos=2,
