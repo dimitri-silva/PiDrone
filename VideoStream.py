@@ -128,7 +128,7 @@ class VideoCapture(threading.Thread):
         json_videos = '['
         for i, file in enumerate(list_videos):
             s = len(list_videos) - 1
-            json_videos += '{"videoPath": "' + file.path + '","name": "' + file.name + '", "date": "' + file.date + '"}'
+            json_videos += '{"name": "' + file.name + '", "date": "' + file.date + '"}'
             if i != s:
                 json_videos += ','
         json_videos += ']'
