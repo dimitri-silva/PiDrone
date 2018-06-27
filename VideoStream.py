@@ -115,24 +115,9 @@ class VideoCapture(threading.Thread):
         print('done')
 
     def listVideos(self):
-        list_videos = []
         path_videos = 'Videos/'
         videos = os.listdir(path_videos)
-        for video_file in videos[:]:
-            if not (video_file.endswith(".h264")):
-                videos.remove(video_file)
-            else:
-                list_videos.append(
-                    File("NAME", path_videos + video_file,
-                         time.ctime(os.path.getctime(path_videos + video_file))))
-        json_videos = '['
-        for i, file in enumerate(list_videos):
-            s = len(list_videos) - 1
-            json_videos += '{"name": "' + file.name + '"}'
-            if i != s:
-                json_videos += ','
-        json_videos += ']'
-        return json_videos
+        return [f.split('.')[0] for f in videos]
 
     def processVideo(self, name):
         ff = ffmpy.FFmpeg(global_options='-framerate 15 -y',
