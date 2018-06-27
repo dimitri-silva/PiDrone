@@ -116,7 +116,7 @@ class VideoCapture(threading.Thread):
 
     def listVideos(self):
         list_videos = []
-        path_videos = 'Videos'
+        path_videos = 'Videos/'
         videos = os.listdir(path_videos)
         for video_file in videos[:]:
             if not (video_file.endswith(".h264")):
@@ -128,7 +128,7 @@ class VideoCapture(threading.Thread):
         json_videos = '['
         for i, file in enumerate(list_videos):
             s = len(list_videos) - 1
-            json_videos += '{"videoPath": "' + file.path +'/' + '","name": "' + file.name + '", "date": "' + file.date + '"}'
+            json_videos += '{"videoPath": "' + file.path + '","name": "' + file.name + '", "date": "' + file.date + '"}'
             if i != s:
                 json_videos += ','
         json_videos += ']'
