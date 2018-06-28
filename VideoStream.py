@@ -113,7 +113,7 @@ class VideoCapture(threading.Thread):
         conn, addr = s.accept()  # Establish connection with client.
         print('Starting video transmission')
         f = open(name, 'rb')
-        conn.send(name.encode())
+        conn.send(name.split("/")[-1].encode())
         print(name)
         l = f.read(1024)
         while (l):
