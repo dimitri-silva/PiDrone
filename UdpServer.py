@@ -47,15 +47,12 @@ def on_publish(mosq, userdata, mid):
 
 
 def runServer():
-    cont = 0
     dic={}
-    dict = {}
-    host = "192.168.1.102"
-    port = 2000
-    msp=MSP()
     client = paho.Client()
     client.on_publish = on_publish
     ids={}
+    mc = memcache.Client(['127.0.0.1:11211'], debug=0)
+    data={}
     count=0
     for data in udp_server():
         modules = {}
@@ -75,4 +72,5 @@ def runServer():
         modules['coords'] = lst
         client.connect("127.0.0.1")
         client.publish("id", json.dumps(modules).encode(), 0)
-        dic[d['deviceId']] = modules
+        dic[ids[d['deviceId']]] = modules
+        mc.set("data",dic)
