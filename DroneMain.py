@@ -22,10 +22,7 @@ class Video(threading.Thread):
         clientVideo.connect("192.168.1.102", 1883, 60)
         clientVideo.subscribe("videoRequest", 0)
         print(cap.listVideos())
-        clientVideo.publish("GS_TOPIC",
-                            payload='{"type": "video_list_updated", "list":' + str(cap.listVideos()) + '}',
-                            qos=2,
-                            retain=True)
+        sendStorageData(clientVideo)
         while clientVideo.loop() == 0:
             pass
 
@@ -77,9 +74,7 @@ def on_message_video(mosq, obj, msg):
             print("Main Recording is already running")
     elif dict["type"] == "stop_recording_main":
         if cap.stopRecord():
-            mosq.publish("GS_TOPIC", payload='{"type": "video_list_updated", "list":' + str(cap.listVideos()) + ' }',
-                         qos=2,
-                         retain=True)
+            sendStorageData(mosq)
             print("Main Recording Stopped")
         else:
             print("Main Recording is already stopped")
@@ -90,11 +85,16 @@ def on_message_video(mosq, obj, msg):
                      retain=True)
         print("Sending video file")
         cap.sendFile('Processing/' + dict['name'] + '.mp4')
-        data = cap.listVideos()
-        mosq.publish("GS_TOPIC",
-                            payload='{"type": "video_list_updated", "list":' + str(data[0]) + ', "storage":' + str(data[1]) + '}',
-                            qos=2,
-                            retain=True)
+        sendStorageData(mosq)
+
+
+def sendStorageData(mosq):
+    out = cap.listVideos()
+    mosq.publish("GS_TOPIC",
+                 payload='{"type": "video_list_updated", "list":' + str(out[0]) + ', "storage":' + str(
+                     out[1]) + '}',
+                 qos=2,
+                 retain=True)
 
 
 def on_publish(mosq, obj, mid):
