@@ -188,7 +188,7 @@ class VideoCapture(threading.Thread):
         for data in self.launchDataGenerator(name):
             if not self.launchDataThread:
                 break
-            mqttc.publish("GS_TOPIC", payload=data, qos=2)
+            mqttc.publish("GS_TOPIC", payload=str(data), qos=2)
 
     def stopLaunchData(self):
         self.launchDataThread = False
