@@ -118,28 +118,37 @@ def on_message_drone(mosq, obj, msg):
         mc.set("calibration", calib)
 
 
+'''
 class ControllerThread(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
 
     def run(self):
-       UdpController.udp_server()
+        UdpController.udp_server()
+
 
 class UDPServerThread(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
 
     def run(self):
-       UdpServer.runServer()
+        UdpController.udp_server()
 
 
+class UDPServerThread(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+
+    def run(self):
+        UdpServer.runServer()
+
+'''
 if __name__ == '__main__':
-
-    #MSP_Thread.start_sending()
-    #controller = ControllerThread()
-    #controller.start()
-    server = UDPServerThread()
-    server.start()
+    # MSP_Thread.start_sending()
+    # controller = ControllerThread()
+    # controller.start()
+    # server = UDPServerThread()
+    # server.start()
     print('██▓███   ██▓▓█████▄  ██▀███   ▒█████   ███▄    █ ▓█████\n▓██░  ██▒▓██▒▒██▀ ██▌▓██ ▒ ██▒▒██▒  ██▒ ██ ▀█   █ ▓█   ▀\n▓██░ ██▓▒▒██▒░██   █▌▓██ ░▄█ ▒▒██░  ██▒▓██  ▀█ ██▒▒███\n▒██▄█▓▒ ▒░██░░▓█▄   ▌▒██▀▀█▄  ▒██   ██░▓██▒  ▐▌██▒▒▓█  ▄\n▒██▒ ░  ░░██░░▒████▓ ░██▓ ▒██▒░ ████▓▒░▒██░   ▓██░░▒████▒\n▒▓▒░ ░  ░░▓   ▒▒▓  ▒ ░ ▒▓ ░▒▓░░ ▒░▒░▒░ ░ ▒░   ▒ ▒ ░░ ▒░ ░\n░▒ ░      ▒ ░ ░ ▒  ▒   ░▒ ░ ▒░  ░ ▒ ▒░ ░ ░░   ░ ▒░ ░ ░  ░\n░░        ▒ ░ ░ ░  ░   ░░   ░ ░ ░ ░ ▒     ░   ░ ░    ░\n░     ░       ░         ░ ░           ░    ░  ░\n░')
     GS_IP = '192.168.1.114'
     cap = VideoCapture(GS_IP)
@@ -148,5 +157,3 @@ if __name__ == '__main__':
     video.start()
     # drone = Drone(on_message_drone, on_publish)
     # drone.start()
-    droneBroker = droneDataBroker()
-    droneBroker.start()
