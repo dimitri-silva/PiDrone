@@ -97,7 +97,7 @@ class VideoCapture(threading.Thread):
         t.start()
 
     def sendFileAssist(self, name):
-        self.semSocket.aquire()
+        self.semSocket.acquire()
         print('Binding socket for file transmission')
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
