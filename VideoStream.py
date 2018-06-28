@@ -137,7 +137,7 @@ class VideoCapture(threading.Thread):
         os.system('mv Videos/' + name + '.h264 Processing/Videos/' + name + '.h264')
         print('Aqui')
         ff = ffmpy.FFmpeg(global_options='-framerate 15 -y',
-                          inputs={'Processing/Videos' + name + '.h264': None},
+                          inputs={'Processing/Videos/' + name + '.h264': None},
                           outputs={'Processing/' + name + '.mp4': '-c:v copy -f mp4'})
         ff.run()
         os.system('rm Processing/' + name + '.h264')
