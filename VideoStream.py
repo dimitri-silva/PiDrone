@@ -7,6 +7,7 @@ import picamera
 import memcache
 import subprocess
 import os
+import paho.mqtt.client as paho
 from MSP_Thread import *
 
 
@@ -112,7 +113,7 @@ class VideoCapture(threading.Thread):
         conn, addr = s.accept()  # Establish connection with client.
         print('Starting video transmission')
         f = open(name, 'rb')
-        conn.send(name)
+        conn.send(name.encode())
         print(name)
         l = f.read(1024)
         while (l):
