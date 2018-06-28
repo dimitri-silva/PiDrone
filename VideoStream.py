@@ -1,10 +1,9 @@
 import socket
 import threading
-import time
 import ffmpy
 import numpy
 import picamera
-from click import File
+import subprocess
 import os
 
 
@@ -31,6 +30,7 @@ class VideoCapture(threading.Thread):
         self.camera.resolution = (1280, 720)
         self.camera.framerate = 15
         self.outputStream = CameraBuffer(self.server_socket, self.DEST)
+        self.semSocket = threading.Lock()
 
     def run(self):
         try:
@@ -85,7 +85,7 @@ class VideoCapture(threading.Thread):
     def stopRecordLaunch(self):
         if self.recordingLaunch:
             self.camera.stop_recording(splitter_port=3)
-            self.processVideo(self.launchName)
+            self.processVideoLaunch(self.launchName)
             name = self.launchName
             self.launchName = None
             self.recordingLaunch = False
@@ -97,12 +97,14 @@ class VideoCapture(threading.Thread):
         t.start()
 
     def sendFileAssist(self, name):
+        self.semSocket.aquire()
+        print('Binding socket for file transmission')
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind(('0.0.0.0', 30000))
         s.listen(0)
         conn, addr = s.accept()  # Establish connection with client.
-        print('conn')
+        print('Starting video transmission')
         f = open(name, 'rb')
         l = f.read(1024)
         while (l):
@@ -112,15 +114,36 @@ class VideoCapture(threading.Thread):
         conn.close()
         s.shutdown(2)
         s.close()
-        print('done')
+        self.semSocket.release()
+        os.system('rm ' + name)
+        print('Stopping file transmission')
 
     def listVideos(self):
         path_videos = 'Videos/'
         videos = os.listdir(path_videos)
-        return [f.split('.')[0] for f in videos]
+        result = subprocess.run(['df', '-h'], stdout=subprocess.PIPE)
+        r = result.stdout.decode('utf-8').split('\n')
+        storage = {}
+        for line in r:
+            line_split = line.split(' ')
+            if line_split[0].strip() == '/dev/root':
+                storage['total_space'] = line_split[8]
+                storage['used_space'] = line_split[10]
+                storage['availiable_space'] = line_split[12]
+                storage['percentage_used'] = line_split[14]
+        return [f.split('.')[0] for f in videos], storage
 
     def processVideo(self, name):
+        os.system('mv Videos/' + name + '.h264 Processing/' + name + '.h264')
+        ff = ffmpy.FFmpeg(global_options='-framerate 15 -y',
+                          inputs={'Processing/' + name + '.h264': None},
+                          outputs={'Processing/' + name + '.mp4': '-c:v copy -f mp4'})
+        ff.run()
+        os.system('rm Processing/' + name + '.h264')
+
+    def processVideoLaunch(self, name):
         ff = ffmpy.FFmpeg(global_options='-framerate 15 -y',
                           inputs={name + '.h264': None},
                           outputs={name + '.mp4': '-c:v copy -f mp4'})
         ff.run()
+        os.system('rm ' + name + '.h264')
