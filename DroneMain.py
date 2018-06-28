@@ -80,7 +80,7 @@ def on_message_video(mosq, obj, msg):
             print("Main Recording is already stopped")
     elif dict["type"] == "process_video":
         print("Processing video file" + dict['name'])
-        cap.processVideo('Videos/' + dict['name'])
+        cap.processVideo(dict['name'])
         mosq.publish("GS_TOPIC", payload='{"type": "video_ready_for_transmit", "name": "' + dict['name'] + '"}', qos=2,
                      retain=True)
         print("Sending video file")
