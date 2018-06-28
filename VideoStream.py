@@ -2,7 +2,9 @@ import socket
 import threading
 import ffmpy
 import numpy
+import paho
 import picamera
+import memcache
 import subprocess
 import os
 from MSP_Thread import *
@@ -32,6 +34,7 @@ class VideoCapture(threading.Thread):
         self.camera.framerate = 15
         self.outputStream = CameraBuffer(self.server_socket, self.DEST)
         self.semSocket = threading.Lock()
+        self.launchDataThread = None
 
     def run(self):
         try:
@@ -153,17 +156,36 @@ class VideoCapture(threading.Thread):
 
     def launchDataGenerator(self, name):
         msp = MSP()
-        i = 74
+        mc = memcache.Client(['127.0.0.1:11211'], debug=0)
         timestamp = 0
         requestsPerSecond = 4
         info = {}
         while True:
             data = getDroneData(msp)
+            info["timestamp"] = timestamp
+            timestamp += 1
             info["lat"] = data["Lat"]
             info["log"] = data["Long"]
             info["ort"] = data["degree"]
             info["alt"] = data["alt"]
             info["angx"] = data["angx"]
             info["angy"] = data["angy"]
-            client.publish("droneInfo", json.dumps(info).encode(), 0, retain=True)
-            time.sleep(1 / requestsPerSecond)
+            info["name"] = name
+            info["gpsData"] = mc.get("data")
+            yield (info)
+
+    def launchData(self, name):
+        self.launchDataThread = True
+        t = threading.Thread(target=self.launchDataAssist, args=(name, ))
+        t.start()
+
+    def launchDataAssist(self, name):
+        mqttc = paho.Client(client_id="launchProducer", clean_session=True)
+        mqttc.connect("192.168.1.102", 1883, 60)
+        for data in self.launchDataGenerator(name):
+            if not self.launchDataThread:
+                break
+            mqttc.publish("GS_TOPIC", payload=data, qos=2)
+
+    def stopLaunchData(self):
+        self.launchDataThread = False
