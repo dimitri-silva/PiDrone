@@ -112,6 +112,7 @@ class VideoCapture(threading.Thread):
         print('Starting video transmission')
         f = open(name, 'rb')
         conn.send(name)
+        print(name)
         l = f.read(1024)
         while (l):
             conn.send(l)
