@@ -7,6 +7,7 @@ from MSP_Thread import getDroneData
 from flask import json
 import converter
 from MSP import MSP
+import memcache
 
 ip = str(socket.gethostbyname(socket.gethostname()))
 
