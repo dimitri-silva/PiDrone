@@ -5,6 +5,7 @@ import numpy
 import picamera
 import subprocess
 import os
+from MSP_Thread import *
 
 
 class CameraBuffer:
@@ -74,6 +75,7 @@ class VideoCapture(threading.Thread):
         return False
 
     def recordLaunch(self, name):
+        msp = MSP()
         if not self.recordingLaunch:
             self.camera.start_recording(name + '.h264', splitter_port=3, format='h264',
                                         bitrate=5000000)
@@ -106,6 +108,7 @@ class VideoCapture(threading.Thread):
         conn, addr = s.accept()  # Establish connection with client.
         print('Starting video transmission')
         f = open(name, 'rb')
+        conn.send(name)
         l = f.read(1024)
         while (l):
             conn.send(l)
@@ -135,7 +138,6 @@ class VideoCapture(threading.Thread):
 
     def processVideo(self, name):
         os.system('mv Videos/' + name + '.h264 Processing/Videos/' + name + '.h264')
-        print('Aqui')
         ff = ffmpy.FFmpeg(global_options='-framerate 15 -y',
                           inputs={'Processing/Videos/' + name + '.h264': None},
                           outputs={'Processing/' + name + '.mp4': '-c:v copy -f mp4'})
@@ -148,3 +150,20 @@ class VideoCapture(threading.Thread):
                           outputs={name + '.mp4': '-c:v copy -f mp4'})
         ff.run()
         os.system('rm ' + name + '.h264')
+
+    def launchDataGenerator(self, name):
+        msp = MSP()
+        i = 74
+        timestamp = 0
+        requestsPerSecond = 4
+        info = {}
+        while True:
+            data = getDroneData(msp)
+            info["lat"] = data["Lat"]
+            info["log"] = data["Long"]
+            info["ort"] = data["degree"]
+            info["alt"] = data["alt"]
+            info["angx"] = data["angx"]
+            info["angy"] = data["angy"]
+            client.publish("droneInfo", json.dumps(info).encode(), 0, retain=True)
+            time.sleep(1 / requestsPerSecond)

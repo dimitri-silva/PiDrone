@@ -47,12 +47,7 @@ def on_publish(mosq, userdata, mid):
 
 
 def runServer():
-    cont = 0
     dic={}
-    dict = {}
-    host = "192.168.1.102"
-    port = 2000
-    msp=MSP()
     client = paho.Client()
     client.on_publish = on_publish
     ids={}
