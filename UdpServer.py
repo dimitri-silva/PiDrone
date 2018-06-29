@@ -7,7 +7,6 @@ from MSP_Thread import getDroneData
 from flask import json
 import converter
 from MSP import MSP
-import memcache
 
 ip = str(socket.gethostbyname(socket.gethostname()))
 
@@ -73,5 +72,6 @@ def runServer():
         modules['coords'] = lst
         client.connect("127.0.0.1")
         client.publish("id", json.dumps(modules).encode(), 0)
-        dic[ids[d['deviceId']]] = modules
-        mc.set("data",dic)
+        if d['type']=='boat':
+            dic[ids[d['deviceId']]] = (d['Lat'],d['Long']))
+            mc.set("data",dic)
