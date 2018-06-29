@@ -113,7 +113,7 @@ def on_message_drone(mosq, obj, msg):
             t = threading.Thread(target=MSP_Thread.MSP_Thread.startFollowing, args=(msp, dict['module_id']))
         t.start()
     elif dict["type"]=="moveStart":
-        t = threading.Thread(target=MSP_Thread.MSP_Thread.startFollowing, args=(msp, (dict['latitude']),dict['longitude'])))
+        t = threading.Thread(target=MSP_Thread.MSP_Thread.startFollowing, args=(msp, (dict['latitude']),dict['longitude']))
         t.start()
 
     elif dict["type"]=="return":
