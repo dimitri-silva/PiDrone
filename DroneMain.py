@@ -58,7 +58,7 @@ def on_message_video(mosq, obj, msg):
     if dict["type"] == "start_recording_launch":
         if cap.recordLaunch(dict["name"]):
             print("Launch Recording Started")
-            cap.launchData(dict["name"])
+            cap.launchData(dict["name"], mosq)
         else:
             print("Launch Recording is already running")
     elif dict["type"] == "stop_recording_launch":

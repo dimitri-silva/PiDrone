@@ -35,7 +35,7 @@ class VideoCapture(threading.Thread):
         self.camera.framerate = 15
         self.outputStream = CameraBuffer(self.server_socket, self.DEST)
         self.semSocket = threading.Lock()
-        self.launchDataThread = None
+        self.launchDataThread = False
 
     def run(self):
         try:
@@ -179,18 +179,18 @@ class VideoCapture(threading.Thread):
             yield (info)
             time.sleep(1/requestsPerSecond)
 
-    def launchData(self, name):
-        self.launchDataThread = True
-        t = threading.Thread(target=self.launchDataAssist, args=(name, ))
-        t.start()
+    def launchData(self, name, client):
+        if not self.launchDataThread:
+            self.launchDataThread = True
+            t = threading.Thread(target=self.launchDataAssist, args=(name, client))
+            t.start()
 
-    def launchDataAssist(self, name):
-        mqttc = paho.Client(client_id="launchProducer", clean_session=True)
-        mqttc.connect("192.168.1.102", 1883, 60)
+    def launchDataAssist(self, name, client):
         for data in self.launchDataGenerator(name):
             if not self.launchDataThread:
                 break
-            mqttc.publish("GS_TOPIC", payload=str(data), qos=2)
+            print("Launch data: " + data)
+            client.publish("GS_TOPIC", payload=str(data), qos=2)
 
     def stopLaunchData(self):
         self.launchDataThread = False
