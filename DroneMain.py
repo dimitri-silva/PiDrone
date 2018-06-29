@@ -38,12 +38,12 @@ class Drone(threading.Thread):
 
     def run(self):
         print('hi')
-        clientVideo = paho.Client()
-        clientVideo.on_message = self.on_message
-        clientVideo.on_publish = self.on_publish
-        clientVideo.connect("192.168.1.102", 1883, 60)
-        clientVideo.subscribe("droneCommand", 0)
-        while clientVideo.loop() == 0:
+        clientDrone = paho.Client()
+        clientDrone.on_message = self.on_message
+        clientDrone.on_publish = self.on_publish
+        clientDrone.connect("192.168.1.102", 1883, 60)
+        clientDrone.subscribe("droneCommand", 0)
+        while clientDrone.loop() == 0:
             pass
 
 
@@ -107,6 +107,7 @@ def on_publish(mosq, obj, mid):
 
 def on_message_drone(mosq, obj, msg):
     dict=json.loads(msg.payload.decode("utf-8"))
+    print(dict)
     if dict["type"] == "calibration":
         calib = dict["calib"]
         mc = memcache.Client(['127.0.0.1:11211'], debug=0)
