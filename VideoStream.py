@@ -174,8 +174,10 @@ class VideoCapture(threading.Thread):
             info["angx"] = data["angx"]
             info["angy"] = data["angy"]
             info["name"] = name
+            info["type"] = 'launch_data'
             info["gpsData"] = mc.get("data")
             yield (info)
+            time.sleep(1/requestsPerSecond)
 
     def launchData(self, name):
         self.launchDataThread = True
