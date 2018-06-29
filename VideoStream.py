@@ -175,12 +175,10 @@ class VideoCapture(threading.Thread):
             info["angy"] = data["angy"]
             info["name"] = name
             info["type"] = 'launch_data'
-            #gps = [(str(k),v) for k,v in dict(mc.get("data"))]
-            for d in dict(mc.get("data")):
-                print(str(d))
-            info["gpsData"] = mc.get("data")
+            gpsData = mc.get("data")
+            gps = [(str(k), gpsData[k]) for k in gpsData]
             yield (info)
-            time.sleep(1/requestsPerSecond)
+            time.sleep(1 / requestsPerSecond)
 
     def launchData(self, name, client):
         if not self.launchDataThread:
@@ -192,7 +190,7 @@ class VideoCapture(threading.Thread):
         for data in self.launchDataGenerator(name):
             if not self.launchDataThread:
                 break
-            #print("Launch data: " + str(data))
+            # print("Launch data: " + str(data))
             client.publish("GS_TOPIC", payload=str(data), qos=2)
 
     def stopLaunchData(self):
