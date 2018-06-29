@@ -189,7 +189,7 @@ class VideoCapture(threading.Thread):
         for data in self.launchDataGenerator(name):
             if not self.launchDataThread:
                 break
-            print("Launch data: " + data)
+            print("Launch data: " + str(data))
             client.publish("GS_TOPIC", payload=str(data), qos=2)
 
     def stopLaunchData(self):
