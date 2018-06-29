@@ -124,6 +124,8 @@ def on_message_drone(mosq, obj, msg):
     elif dict["type"] == "moveBuoy":
         t = threading.Thread(target=MSP_Thread.MSP_Thread.go_to_buoy, args=(msp, dict['id']))
         t.start()
+    elif dict[type] == "calibration":
+    	print(dict)
 
 
 
