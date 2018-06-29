@@ -1,14 +1,13 @@
 import paho.mqtt.client as paho
 from VideoStream import VideoCapture
 import MSP_Thread
-from MSP import MSP
 import threading
 import json
 import UdpServer
 import UdpController
 import memcache
 from droneDataBroker import droneDataBroker
-import ColorDetection
+
 
 class Video(threading.Thread):
     def __init__(self, on_message, on_publish):
@@ -38,12 +37,12 @@ class Drone(threading.Thread):
 
     def run(self):
         print('hi')
-        clientDrone = paho.Client()
-        clientDrone.on_message = self.on_message
-        clientDrone.on_publish = self.on_publish
-        clientDrone.connect("192.168.1.102", 1883, 60)
-        clientDrone.subscribe("droneCommand", 0)
-        while clientDrone.loop() == 0:
+        clientVideo = paho.Client()
+        clientVideo.on_message = self.on_message
+        clientVideo.on_publish = self.on_publish
+        clientVideo.connect("192.168.1.102", 1883, 60)
+        clientVideo.subscribe("droneCommand", 0)
+        while clientVideo.loop() == 0:
             pass
 
 
@@ -58,12 +57,10 @@ def on_message_video(mosq, obj, msg):
     if dict["type"] == "start_recording_launch":
         if cap.recordLaunch(dict["name"]):
             print("Launch Recording Started")
-            cap.launchData(dict["name"])
         else:
             print("Launch Recording is already running")
     elif dict["type"] == "stop_recording_launch":
         name = cap.stopRecordLaunch()
-        cap.stopLaunchData()
         if name:
             mosq.publish("GS_TOPIC", payload='{"type": "launch_ready_for_transmit", "name": "' + name + '"}', qos=2,
                          retain=True)
@@ -106,26 +103,24 @@ def on_publish(mosq, obj, mid):
 
 
 def on_message_drone(mosq, obj, msg):
-    dict=json.loads(msg.payload.decode("utf-8"))
-    msp=MSP()
-    if dict["type"]=="moveBoat":
-        t = threading.Thread(target=MSP_Thread.MSP_Thread.startFollowing, args=(msp, dict['id']))
-        t.start()
-
-    elif dict["type"]=="return":
-        t = threading.Thread(target=MSP_Thread.MSP_Thread.stopFollowing, args=())
-        t.start()
-
-    elif dict["type"] == "moveBuoy":
-        t = threading.Thread(target=MSP_Thread.MSP_Thread.go_to_buoy, args=(msp, dict['id']))
-        t.start()
-    elif dict["type"] == "calibration":
+    dict=json.loads(msg.payload)
+    if dict["type"] == "calibration":
         calib = dict["calib"]
         mc = memcache.Client(['127.0.0.1:11211'], debug=0)
         mc.set("calibration", calib)
-        #ColorDetection.startDetection()
-        
+        return
+    msp=MSP()
+    if dict["type"]=="moveBoat":
+        t = threading.Thread(target=RPI.MSP_Thread.MSP_Thread.startFollowing, args=(msp, dict['id']))
+        t.start()
 
+    elif dict["type"]=="return":
+        t = threading.Thread(target=RPI.MSP_Thread.MSP_Thread.stopFollowing, args=())
+        t.start()
+
+    elif dict["type"] == "moveBuoy":
+        t = threading.Thread(target=RPI.MSP_Thread.MSP_Thread.go_to_buoy, args=(msp, dict['id']))
+        t.start()
 
 
 
