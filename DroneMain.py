@@ -1,12 +1,11 @@
 import paho.mqtt.client as paho
 from VideoStream import VideoCapture
-import MSP_Thread
+# import MSP_Thread
 import threading
 import json
-import UdpServer
-import UdpController
+# import UdpServer
+# import UdpController
 import memcache
-from droneDataBroker import droneDataBroker
 
 
 class Video(threading.Thread):
@@ -103,26 +102,20 @@ def on_publish(mosq, obj, mid):
 
 
 def on_message_drone(mosq, obj, msg):
-    dict=json.loads(msg.payload)
-    if dict["type"] == "calibration":
+    print("%s" % (msg.payload))
+    print('im mosquito')
+    dict = json.loads(msg.payload.decode("utf-8"))
+    print("got new messaage")
+    if dict["type"] == "move":
+        print("going")
+        # request.startFollowing(1,15000)
+
+    elif dict["type"] == "return":
+        print("stopping")
+    elif dict["type"] == "calibration":
         calib = dict["calib"]
         mc = memcache.Client(['127.0.0.1:11211'], debug=0)
         mc.set("calibration", calib)
-        return
-    msp=MSP()
-    if dict["type"]=="moveBoat":
-        t = threading.Thread(target=RPI.MSP_Thread.MSP_Thread.startFollowing, args=(msp, dict['id']))
-        t.start()
-
-    elif dict["type"]=="return":
-        t = threading.Thread(target=RPI.MSP_Thread.MSP_Thread.stopFollowing, args=())
-        t.start()
-
-    elif dict["type"] == "moveBuoy":
-        t = threading.Thread(target=RPI.MSP_Thread.MSP_Thread.go_to_buoy, args=(msp, dict['id']))
-        t.start()
-
-
 
 
 class ControllerThread(threading.Thread):
@@ -148,12 +141,12 @@ if __name__ == '__main__':
     server = UDPServerThread()
     server.start()
     print('██▓███   ██▓▓█████▄  ██▀███   ▒█████   ███▄    █ ▓█████\n▓██░  ██▒▓██▒▒██▀ ██▌▓██ ▒ ██▒▒██▒  ██▒ ██ ▀█   █ ▓█   ▀\n▓██░ ██▓▒▒██▒░██   █▌▓██ ░▄█ ▒▒██░  ██▒▓██  ▀█ ██▒▒███\n▒██▄█▓▒ ▒░██░░▓█▄   ▌▒██▀▀█▄  ▒██   ██░▓██▒  ▐▌██▒▒▓█  ▄\n▒██▒ ░  ░░██░░▒████▓ ░██▓ ▒██▒░ ████▓▒░▒██░   ▓██░░▒████▒\n▒▓▒░ ░  ░░▓   ▒▒▓  ▒ ░ ▒▓ ░▒▓░░ ▒░▒░▒░ ░ ▒░   ▒ ▒ ░░ ▒░ ░\n░▒ ░      ▒ ░ ░ ▒  ▒   ░▒ ░ ▒░  ░ ▒ ▒░ ░ ░░   ░ ▒░ ░ ░  ░\n░░        ▒ ░ ░ ░  ░   ░░   ░ ░ ░ ░ ▒     ░   ░ ░    ░\n░     ░       ░         ░ ░           ░    ░  ░\n░')
-    GS_IP = '192.168.1.124'
+    GS_IP = '192.168.1.114'
     cap = VideoCapture(GS_IP)
     cap.start()
     video = Video(on_message_video, on_publish)
     video.start()
-    drone = Drone(on_message_drone, on_publish)
-    drone.start()
+    # drone = Drone(on_message_drone, on_publish)
+    # drone.start()
     droneBroker = droneDataBroker()
     droneBroker.start()
