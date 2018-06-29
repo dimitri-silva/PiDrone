@@ -8,7 +8,7 @@ import UdpServer
 import UdpController
 import memcache
 from droneDataBroker import droneDataBroker
-
+import ColorDetection
 
 class Video(threading.Thread):
     def __init__(self, on_message, on_publish):
@@ -124,7 +124,9 @@ def on_message_drone(mosq, obj, msg):
         calib = dict["calib"]
         mc = memcache.Client(['127.0.0.1:11211'], debug=0)
         mc.set("calibration", calib)
-        print(mc.get("calibration"))
+        ColorDetection.startDetection()
+        
+
 
 
 
