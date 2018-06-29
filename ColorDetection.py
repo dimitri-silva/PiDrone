@@ -11,6 +11,7 @@ def startDetection():
     mc = memcache.Client(['127.0.0.1:11211'], debug=0)
     data = mc.get("calibration")
     icol = (int(data["minHue"]), int(data["maxHue"]), int(data["minSat"]), int(data["maxSat"]), int(data["minBright"]), int(data["maxBright"]))
+    print('tuplo')
     print(icol)
 
 

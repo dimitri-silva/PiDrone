@@ -107,7 +107,6 @@ def on_publish(mosq, obj, mid):
 
 def on_message_drone(mosq, obj, msg):
     dict=json.loads(msg.payload.decode("utf-8"))
-    print(dict)
     msp=MSP()
     if dict["type"]=="moveBoat":
         t = threading.Thread(target=MSP_Thread.MSP_Thread.startFollowing, args=(msp, dict['id']))
