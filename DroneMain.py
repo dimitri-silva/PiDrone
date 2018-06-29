@@ -106,7 +106,7 @@ def on_publish(mosq, obj, mid):
 
 
 def on_message_drone(mosq, obj, msg):
-    dict=json.loads(msg.payload)
+    dict=json.loads(msg.payload.decode("utf-8"))
     if dict["type"] == "calibration":
         calib = dict["calib"]
         mc = memcache.Client(['127.0.0.1:11211'], debug=0)
