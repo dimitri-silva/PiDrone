@@ -108,11 +108,6 @@ def on_publish(mosq, obj, mid):
 def on_message_drone(mosq, obj, msg):
     dict=json.loads(msg.payload.decode("utf-8"))
     print(dict)
-    if dict["type"] == "calibration":
-        calib = dict["calib"]
-        mc = memcache.Client(['127.0.0.1:11211'], debug=0)
-        mc.set("calibration", calib)
-        return
     msp=MSP()
     if dict["type"]=="moveBoat":
         t = threading.Thread(target=MSP_Thread.MSP_Thread.startFollowing, args=(msp, dict['id']))
@@ -126,7 +121,10 @@ def on_message_drone(mosq, obj, msg):
         t = threading.Thread(target=MSP_Thread.MSP_Thread.go_to_buoy, args=(msp, dict['id']))
         t.start()
     elif dict["type"] == "calibration":
-    	print(dict)
+    	calib = dict["calib"]
+        mc = memcache.Client(['127.0.0.1:11211'], debug=0)
+        mc.set("calibration", calib)
+        print(mc.get("calibration"))
 
 
 
