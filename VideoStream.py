@@ -177,6 +177,8 @@ class VideoCapture(threading.Thread):
             info["type"] = 'launch_data'
             gpsData = mc.get("data")
             gps = [(str(k), gpsData[k]) for k in gpsData]
+            info["gpsData"] = gps
+            print(gps)
             yield (info)
             time.sleep(1 / requestsPerSecond)
 
