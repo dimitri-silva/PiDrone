@@ -21,6 +21,8 @@ class MSP:
                 self.multiWii = msp('/dev/ttyACM0')
             self.lock = threading.Lock()
             self.port = port
+            self.ret=0
+            self.retLock = threading.Lock()
         def __str__(self):
             return repr(self)
     instance = None
@@ -46,6 +48,13 @@ class MSP:
             self.lock.release()
             return dictDrone
         return
+  
+    def MSP_message_mock(self,data=None):
+        self.lock.acquire()
+        #print(123)
+        self.lock.release()
+        if data:
+            return data
 
     def MSP_message_mock(self,data=None):
         self.lock.acquire()

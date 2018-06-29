@@ -50,18 +50,36 @@ def follow_boat_loop(msp,boatGps,altitude=15,heading=0):
 
 def startFollowing(msp,deviceId,altitude=15,heading=0):
     mc = memcache.Client(['127.0.0.1:11211'], debug=0)
-    if (mc.get("return") == 1):
+    msp.retLock.acquire()
+    ret=msp.ret
+    if (ret == 1):
+        msp.retLock.release()
         return
-    mc.set("return",1)
-    while mc.get("return") == 1 :
+    msp.ret=1
+    msp.retLock.release()
+    while ret == 1 :
+        msp.retLock.acquire()
+        ret=msp.ret
         data=mc.get("data")
         point=data[deviceId]["coords"]
         follow_boat_loop(msp,point,altitude,heading)
+        msp.retLock.release()
         time.sleep(0.1)
 
-def stopFollowing():
-    mc = memcache.Client(['127.0.0.1:11211'], debug=0)
-    mc.set("return",0)
+def goToPosition(msp,gpsPos,altitude=20,heading=0):
+    msp.retLock.acquire()
+    ret=msp.ret
+    if (ret == 1):
+        msp.retLock.release()
+        return
+    msp.ret=1
+    msp.retLock.release()
+    follow_boat_loop(msp,gpsPos,altitude,heading)
+
+def stopFollowing(msp):
+    msp.retLock.acquire()
+    msp.ret=0
+    msp.retLock.release()
 
 def go_to_buoy(msp, buoy_id,altitude,heading=0):
     mc = memcache.Client(['127.0.0.1:11211'], debug=0)
@@ -70,6 +88,7 @@ def go_to_buoy(msp, buoy_id,altitude,heading=0):
         point = data[buoy_id]["coords"]
         payload=payloadStart+[point[0],point[1],altitude,heading]+payloadEnd
         data=send_msp(msp,209,payload=payload)
+
 
 def send_drone_data(msp,host="192.168.4.1", port=2000):
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

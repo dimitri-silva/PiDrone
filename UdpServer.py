@@ -10,18 +10,6 @@ from MSP import MSP
 
 ip = str(socket.gethostbyname(socket.gethostname()))
 
-def publish_on_rest(dic):
-    x = '{ "type": "FeatureCollection", "features":['
-    for i, key in enumerate(dic.keys()):
-        s = len(dic) - 1
-        x += str(json.dumps(dic[key]))
-        if i != s:
-            x += ','
-    x += ']}'
-    try:
-        r = requests.post('http://'+ip+':5000/produce', x)
-    except requests.exceptions.RequestException as e:
-        log.info("Rest API not Available. Reason: " + e)
 
 log = logging.getLogger('udp_server')
 
@@ -47,25 +35,18 @@ def on_publish(mosq, userdata, mid):
 
 
 def runServer():
-    cont = 0
     dic={}
-    dict = {}
-    host = "192.168.1.102"
-    port = 2000
-    msp=MSP()
-    # Specifying a client id here could lead to collisions if you have multiple
-    # clients sending. Either generate a random id, or use:
-    # client = mosquitto.Mosquitto()
     client = paho.Client()
     client.on_publish = on_publish
     ids={}
+    mc = memcache.Client(['127.0.0.1:11211'], debug=0)
+    data={}
     count=0
     for data in udp_server():
         modules = {}
         values = data.decode("utf-8")
         d = json.loads(values)
         lst= []
-        print('i got data')
         if d['deviceId'] not in ids:
             count+=1
             ids[d['deviceId']]=count
@@ -77,26 +58,8 @@ def runServer():
         lst.append(d['Long'])
         lst.append(d['Lat'])
         modules['coords'] = lst
-
-        #s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        #s.connect((host, port))
-        print('before drone data')
-        #data = getDroneData(msp)
-        print('data',data)
-        #data['Lat']=d['Lat']
-        #data['Long']=d['Long']
-        #if data["alt"]<=5:
-        #    data["alt"]=15
-        #result=converter.getCanvasPosition((data["Lat"],data["Long"]),(d["Lat"],d["Long"]),-data["degree"],data["alt"],[radians(data["angx"]),radians(data["angy"])])
-        #print('result ', result)
-        #idMap={"id":ids[d['deviceId']],"result":result}
-        #idMap=(ids[d['deviceId']],result)
-        print('before connect')
         client.connect("127.0.0.1")
-        print('values :', values)
-        print('data : ', data)
         client.publish("id", json.dumps(modules).encode(), 0)
-        #s.send(json.dumps(data).encode())
-        dic[d['deviceId']] = modules
-        print('final',dic)
-	#publish_on_rest(dic)
+        if d['type']=='boat':
+            dic[ids[d['deviceId']]] = (d['Lat'],d['Long']))
+        mc.set("data",dic)
