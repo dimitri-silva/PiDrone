@@ -15,7 +15,7 @@ def startDetection(capture):
     highHue = int(data["maxHue"])
     highSat =  int(data["maxSat"])
     highVal = int(data["maxBright"])
-    frame = capture.read()
+    frame = capture.readFrame()
     print(frame)
 
 
