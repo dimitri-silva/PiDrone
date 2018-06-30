@@ -136,10 +136,18 @@ class VideoCapture(threading.Thread):
         for line in r:
             line_split = line.split(' ')
             if line_split[0].strip() == '/dev/root':
-                storage['total_space'] = line_split[8]
-                storage['used_space'] = line_split[10]
-                storage['availiable_space'] = line_split[12]
-                storage['percentage_used'] = line_split[14]
+                cont = 0
+                for s in line_split[1:]:
+                    if s != '':
+                        if cont ==0:
+                            storage['total_space'] = s
+                        elif cont ==1:
+                            storage['used_space'] = s
+                        elif cont ==2:
+                            storage['availiable_space'] = s
+                        elif cont ==3:
+                            storage['percentage_used'] = s
+                        cont += 1
         return [f.split('.')[0] for f in videos], storage
 
     def processVideo(self, name):
