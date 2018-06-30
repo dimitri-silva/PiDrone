@@ -18,7 +18,7 @@ def startDetection(capture):
     frame = capture.readFrame()
     print(frame)
     val = cv2.imencode('.jpeg', frame, [cv2.IMWRITE_JPEG_QUALITY, 200])[1]
-    cv2.imshow('thisframe', val)
+    cv2.imwrite('testframe.jpeg', val)
 
 
 
