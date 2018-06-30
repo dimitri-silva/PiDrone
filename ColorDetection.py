@@ -17,7 +17,7 @@ def startDetection(capture):
     highVal = int(data["maxBright"])
     frame = capture.readFrame()
     print(frame)
-    cv2.imshow(frame)
+    cv2.imshow('thisframe', frame)
 
 
 
