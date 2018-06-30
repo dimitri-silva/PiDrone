@@ -31,10 +31,11 @@ class Video(threading.Thread):
 
 class Drone(threading.Thread):
 
-    def __init__(self, on_message, on_publish):
+    def __init__(self, on_message, on_publish,cap):
         threading.Thread.__init__(self)
         self.on_message = on_message
         self.on_publish = on_publish
+        self.cap = cap
 
     def run(self):
         print('hi')
@@ -125,7 +126,7 @@ def on_message_drone(mosq, obj, msg):
         calib = dict["calib"]
         mc = memcache.Client(['127.0.0.1:11211'], debug=0)
         mc.set("calibration", calib)
-        ColorDetection.startDetection()
+        ColorDetection.startDetection(cap)
         
 
 
