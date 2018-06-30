@@ -1,8 +1,5 @@
-#import cv2
 import memcache
-
-def nothing(*arg):
-        pass
+import cv2
 
 
 def startDetection():
