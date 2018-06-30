@@ -5,6 +5,7 @@ import json
 from MSP_Thread import getDroneData
 import requests
 import threading
+import time
 
 
 class droneDataBroker(threading.Thread):
@@ -17,6 +18,7 @@ class droneDataBroker(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
+        time.sleep(2)
         client = paho.Client()
         client.connect("127.0.0.1")
         msp = MSP()
