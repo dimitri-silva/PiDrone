@@ -10,18 +10,6 @@ from MSP import MSP
 
 ip = str(socket.gethostbyname(socket.gethostname()))
 
-def publish_on_rest(dic):
-    x = '{ "type": "FeatureCollection", "features":['
-    for i, key in enumerate(dic.keys()):
-        s = len(dic) - 1
-        x += str(json.dumps(dic[key]))
-        if i != s:
-            x += ','
-    x += ']}'
-    try:
-        r = requests.post('http://'+ip+':5000/produce', x)
-    except requests.exceptions.RequestException as e:
-        log.info("Rest API not Available. Reason: " + e)
 
 log = logging.getLogger('udp_server')
 
@@ -72,5 +60,6 @@ def runServer():
         modules['coords'] = lst
         client.connect("127.0.0.1")
         client.publish("id", json.dumps(modules).encode(), 0)
-        dic[ids[d['deviceId']]] = modules
-        mc.set("data",data)
+        if d['type']=='boat':
+            dic[ids[d['deviceId']]] = (d['Lat'],d['Long']))
+        mc.set("data",dic)
