@@ -164,3 +164,4 @@ if __name__ == '__main__':
     drone.start()
     droneBroker = droneDataBroker()
     droneBroker.start()
+    ColorDetection.startDetection(cap)
