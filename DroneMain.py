@@ -125,7 +125,7 @@ def on_message_drone(mosq, obj, msg):
         calib = dict["calib"]
         mc = memcache.Client(['127.0.0.1:11211'], debug=0)
         mc.set("calibration", calib)
-        ColorDetection.startDetection()
+        ColorDetection.startDetection(cap)
         
 
 
