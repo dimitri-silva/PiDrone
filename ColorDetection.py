@@ -16,12 +16,29 @@ def startDetection(capture):
     highSat =  int(data["maxSat"])
     highVal = int(data["maxBright"])
     frame = capture.readFrame()
-    print(frame)
-    cv2.imshow('oi', frame)
-    cv2.imwrite('testframe.jpeg', frame)
+    frameHSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    colorLow = np.array([lowHue,lowSat,lowVal])
+    colorHigh = np.array([highHue,highSat,highVal])
+    mask = cv2.inRange(frameHSV, colorLow, colorHigh)
+    im2, contours, hierarchy = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contour_sizes = [(cv2.contourArea(contour), contour) for contour in contours]
+    if len(contour_sizes)>0:
+        biggest_contour = max(contour_sizes, key=lambda x: x[0])[1]
+        x,y,w,h = cv2.boundingRect(biggest_contour)
+        cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)
+        print("X= " + str(x))
+        print("Y= " + str(y))
+        if(y<FRAME_HEIGHT/2-75):
+            print("Must go down")
+        elif(y>FRAME_HEIGHT/2 + 75):
+            print("Must go up")
 
-
-
+        if(x>FRAME_WIDTH/2+100):
+            print("Must go left")
+        elif(x<FRAME_WIDTH/2-100):
+            print("Must go right")
+    else:
+        print("CANT FIND ANYTHING")
 
 
 # Initial HSV GUI slider values to load on program start.
