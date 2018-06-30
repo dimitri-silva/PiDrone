@@ -61,6 +61,7 @@ class VideoCapture(threading.Thread):
     def readFrame(self):
         image = numpy.empty((720 * 1280 * 3,), dtype=numpy.uint8)
         self.camera.capture(image, 'bgr', splitter_port=0)
+        image = image.reshape((720, 1280, 3))
         return image
 
     def record(self, name):
