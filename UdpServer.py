@@ -62,5 +62,5 @@ def runServer():
         client.connect("127.0.0.1")
         client.publish("id", json.dumps(modules).encode(), 0)
         if d['type']=='boat':
-            dic[ids[d['deviceId']]] = (d['Lat'],d['Long'])
+            dic[ids[d['deviceId']]] = modules
         mc.set("data",dic)
