@@ -31,11 +31,10 @@ class Video(threading.Thread):
 
 class Drone(threading.Thread):
 
-    def __init__(self, on_message, on_publish,cap):
+    def __init__(self, on_message, on_publish):
         threading.Thread.__init__(self)
         self.on_message = on_message
         self.on_publish = on_publish
-        self.cap = cap
 
     def run(self):
         print('hi')
