@@ -25,7 +25,6 @@ class droneDataBroker(threading.Thread):
         info = {}
         i=74
         while True:
-            time.sleep(0.1)
             data = getDroneData(msp)
             info["module_type"]='droneInfo'
             info["type"]="drone"
@@ -40,7 +39,3 @@ class droneDataBroker(threading.Thread):
             info["coords"]=(data["Lat"],data["Long"])
             client.publish("droneInfo", json.dumps(info).encode(), 0,retain=True)
             ip="192.168.1.103"
-            try:
-                r = requests.post('http://'+ip+':5000/produceDrone', json.dumps(dic))
-            except:
-                pass
