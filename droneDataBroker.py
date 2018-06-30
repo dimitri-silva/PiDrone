@@ -18,7 +18,6 @@ class droneDataBroker(threading.Thread):
         threading.Thread.__init__(self)
 
     def run(self):
-        time.sleep(2)
         client = paho.Client()
         client.connect("127.0.0.1")
         msp = MSP()
@@ -26,6 +25,7 @@ class droneDataBroker(threading.Thread):
         i=74
         while True:
             data = getDroneData(msp)
+            time.sleep(2)
             info["module_type"]='droneInfo'
             info["type"]="drone"
             info["btl"]=str(i)
