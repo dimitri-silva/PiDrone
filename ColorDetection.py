@@ -29,7 +29,7 @@ def startDetection(capture):
         cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)
 
         xx = x+int(w/2)
-        yy = y+int(yy/2)
+        yy = y+int(h/2)
 
         print("X= " + str(xx))
         print("Y= " + str(yy))
