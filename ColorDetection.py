@@ -1,7 +1,9 @@
 import memcache
 import cv2
 import numpy as np
-
+import toGPS
+import MSP_Thread
+from MSP import MSP
 
 def startDetection(capture):
     FRAME_WIDTH = 1280
@@ -31,6 +33,10 @@ def startDetection(capture):
         xx = x+int(w/2)
         yy = y+int(h/2)
 
+
+
+
+
         print("X= " + str(xx))
         print("Y= " + str(yy))
         if(yy<FRAME_HEIGHT/2-75):
@@ -42,6 +48,14 @@ def startDetection(capture):
             print("Must go left")
         elif(xx<FRAME_WIDTH/2-100):
             print("Must go right")
+
+        msp=MSP()
+        droneData=getDroneData(msp)
+        print(droneData)
+        #print(FRAME_WIDTH, FRAME_HEIGHT, xx, yy, (dict['Lat'],dict['Long']), (62.2,48.8), -dict['degree'], heigh,(radians(dict['angx']),radians(dict['angy'])))
+        #toGPS.get_gps(FRAME_WIDTH, FRAME_HEIGHT, xx, yy, (dict['Lat'],dict['Long']), (62.2,48.8), -dict['degree'], heigh,(radians(dict['angx']),radians(dict['angy'])))
+        
+
     else:
         print("CANT FIND ANYTHING")
 

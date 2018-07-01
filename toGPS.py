@@ -77,4 +77,4 @@ def destination( point, bearing, distance):
 
 
 #print(get_gps(100,100,50,50,(40.639782, -8.677226),(90,90),-0,10,(radians(45),radians(0))))
-print(get_gps(500, 500, 0, 0, (40.6329514, -8.6601084), (62.2, 48.8), -0, 20, (radians(-45), radians(-0))))
+#print(get_gps(500, 500, 0, 0, (40.6329514, -8.6601084), (62.2, 48.8), -0, 20, (radians(-45), radians(-0))))
