@@ -4,7 +4,7 @@ import numpy as np
 import toGPS
 from MSP_Thread import getDroneData
 from MSP import MSP
-import radians
+from math import radians, degrees
 
 def startDetection(capture):
     FRAME_WIDTH = 1280
