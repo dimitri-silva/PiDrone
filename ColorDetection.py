@@ -56,9 +56,7 @@ def startDetection(capture):
         	height=15
         print(droneData)
         print(FRAME_WIDTH, FRAME_HEIGHT, xx, yy, (droneData['Lat'],droneData['Long']), (62.2,48.8), droneData['degree'], height ,(radians(droneData['angy']),-radians(droneData['angx'])))
-        print(toGPS.get_gps(FRAME_WIDTH, FRAME_HEIGHT, xx, yy, (dict['Lat'],dict['Long']), (62.2,48.8), -dict['degree'], heigh,(radians(dict['angx']),radians(dict['angy'])))
-        
-
+        print(toGPS.get_gps(FRAME_WIDTH, FRAME_HEIGHT, xx, yy, (dict['Lat'],dict['Long']), (62.2,48.8), -dict['degree'], heigh,(radians(dict['angx']),radians(dict['angy']))))
     else:
         print("CANT FIND ANYTHING")
 
