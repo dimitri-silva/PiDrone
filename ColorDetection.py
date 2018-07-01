@@ -27,16 +27,20 @@ def startDetection(capture):
         biggest_contour = max(contour_sizes, key=lambda x: x[0])[1]
         x,y,w,h = cv2.boundingRect(biggest_contour)
         cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),2)
-        print("X= " + str(x))
-        print("Y= " + str(y))
-        if(y<FRAME_HEIGHT/2-75):
+
+        xx = x+int(w/2)
+        yy = y+int(yy/2)
+
+        print("X= " + str(xx))
+        print("Y= " + str(yy))
+        if(yy<FRAME_HEIGHT/2-75):
             print("Must go down")
-        elif(y>FRAME_HEIGHT/2 + 75):
+        elif(yy>FRAME_HEIGHT/2 + 75):
             print("Must go up")
 
-        if(x>FRAME_WIDTH/2+100):
+        if(xx>FRAME_WIDTH/2+100):
             print("Must go left")
-        elif(x<FRAME_WIDTH/2-100):
+        elif(xx<FRAME_WIDTH/2-100):
             print("Must go right")
     else:
         print("CANT FIND ANYTHING")
