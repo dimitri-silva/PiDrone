@@ -56,8 +56,10 @@ def startDetection(capture):
         if(height<2):
         	height=15
         print(droneData)
-        print(FRAME_WIDTH, FRAME_HEIGHT, xx, yy, (droneData['Lat'],droneData['Long']), (62.2,48.8), droneData['degree'], height ,(radians(droneData['angy']),-radians(droneData['angx'])))
-        print(toGPS.get_gps(FRAME_WIDTH, FRAME_HEIGHT, xx, yy, (droneData['Lat'],droneData['Long']), (62.2,48.8), droneData['degree'], height ,(radians(droneData['angy']),-radians(droneData['angx']))))
+        #print(FRAME_WIDTH, FRAME_HEIGHT, xx, FRAME_HEIGHT - yy, (droneData['Lat'],droneData['Long']), (62.2,48.8), -droneData['degree'], height ,(radians(droneData['angy']),-radians(droneData['angx'])))
+        xx=FRAME_WIDTH/2
+        yy=FRAME_HEIGHT
+        print(toGPS.get_gps(FRAME_WIDTH, FRAME_HEIGHT, xx, yy, (droneData['Lat'],droneData['Long']), (62.2,48.8), -90, height ,(0,0)))
     else:
         print("CANT FIND ANYTHING")
 
