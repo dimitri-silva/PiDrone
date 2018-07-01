@@ -60,13 +60,13 @@ def startDetection(capture):
         xx=FRAME_WIDTH/2
         yy=FRAME_HEIGHT
         result = toGPS.get_gps(FRAME_WIDTH, FRAME_HEIGHT, xx, yy, (droneData['Lat'],droneData['Long']), (62.2,48.8), -90, height ,(0,0))
-        print("%.16f%.16f", result[0],result[1])
+        print("%.16f" % result[0],"%.16f" %  result[1])
     else:
         print("CANT FIND ANYTHING")
 
 
 # Initial HSV GUI slider values to load on program start.
-#icol = (36, 202, 59, 71, 255, 255)    # Green
+#icol = (36, 202, 59, 71, 255, 255)    # Green	
 #icol = (18, 0, 196, 36, 255, 255)  # Yellow
 #icol = (89, 0, 0, 125, 255, 255)  # Blue
 #icol = (0, 100, 80, 10, 255, 255)   # Red
