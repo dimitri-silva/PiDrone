@@ -108,16 +108,16 @@ def on_message_drone(mosq, obj, msg):
     msp=MSP()
     if dict["type"]=="move":
         if dict["module_type_name"] == "buoy":
-            t = threading.Thread(target=MSP_Thread.MSP_Thread.go_to_buoy, args=(msp,dict['module_id']))
+            t = threading.Thread(target=MSP_Thread.go_to_buoy, args=(msp,dict['module_id']))
         if dict["module_type_name"]=="boat":
-            t = threading.Thread(target=MSP_Thread.MSP_Thread.startFollowing, args=(msp, dict['module_id']))
+            t = threading.Thread(target=MSP_Thread.startFollowing, args=(msp, dict['module_id']))
         t.start()
     elif dict["type"]=="moveStart":
-        t = threading.Thread(target=MSP_Thread.MSP_Thread.startFollowing, args=(msp, (dict['latitude']),dict['longitude']))
+        t = threading.Thread(target=MSP_Thread.startFollowing, args=(msp, (dict['latitude']),dict['longitude']))
         t.start()
 
     elif dict["type"]=="return":
-        t = threading.Thread(target=MSP_Thread.MSP_Thread.stopFollowing, args=(msp,))
+        t = threading.Thread(target=MSP_Thread.stopFollowing, args=(msp,))
         t.start()
 
 
@@ -155,7 +155,7 @@ if __name__ == '__main__':
     server = UDPServerThread()
     server.start()
     print('██▓███   ██▓▓█████▄  ██▀███   ▒█████   ███▄    █ ▓█████\n▓██░  ██▒▓██▒▒██▀ ██▌▓██ ▒ ██▒▒██▒  ██▒ ██ ▀█   █ ▓█   ▀\n▓██░ ██▓▒▒██▒░██   █▌▓██ ░▄█ ▒▒██░  ██▒▓██  ▀█ ██▒▒███\n▒██▄█▓▒ ▒░██░░▓█▄   ▌▒██▀▀█▄  ▒██   ██░▓██▒  ▐▌██▒▒▓█  ▄\n▒██▒ ░  ░░██░░▒████▓ ░██▓ ▒██▒░ ████▓▒░▒██░   ▓██░░▒████▒\n▒▓▒░ ░  ░░▓   ▒▒▓  ▒ ░ ▒▓ ░▒▓░░ ▒░▒░▒░ ░ ▒░   ▒ ▒ ░░ ▒░ ░\n░▒ ░      ▒ ░ ░ ▒  ▒   ░▒ ░ ▒░  ░ ▒ ▒░ ░ ░░   ░ ▒░ ░ ░  ░\n░░        ▒ ░ ░ ░  ░   ░░   ░ ░ ░ ░ ▒     ░   ░ ░    ░\n░     ░       ░         ░ ░           ░    ░  ░\n░')
-    GS_IP = '192.168.1.114'
+    GS_IP = '192.168.1.103'
     cap = VideoCapture(GS_IP)
     cap.start()
     video = Video(on_message_video, on_publish)
