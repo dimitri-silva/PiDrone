@@ -60,7 +60,7 @@ def startDetection(capture):
         xx=FRAME_WIDTH/2
         yy=FRAME_HEIGHT
         result = toGPS.get_gps(FRAME_WIDTH, FRAME_HEIGHT, xx, yy, (droneData['Lat'],droneData['Long']), (62.2,48.8), -90, height ,(0,0))
-        print(result[0].evalf(),result[1].evalf())
+        print("%.16f%.16f", result[0],result[1])
     else:
         print("CANT FIND ANYTHING")
 
