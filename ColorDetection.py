@@ -2,7 +2,7 @@ import memcache
 import cv2
 import numpy as np
 import toGPS
-import MSP_Thread
+from MSP_Thread import getDroneData
 from MSP import MSP
 
 def startDetection(capture):
