@@ -188,7 +188,7 @@ class VideoCapture(threading.Thread):
             gps = []
             print(gpsData)
             if gpsData:
-                gps = [[str(k), [d for d in gpsData[k]]] for k in gpsData]
+                gps = [[str(k), gpsData[k]] for k in gpsData]
             info["gpsData"] = gps
             #print(gps)
             yield (info)
