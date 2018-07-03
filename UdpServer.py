@@ -56,8 +56,14 @@ def runServer():
         modules['deviceId'] = d['deviceId']
         modules['type'] = d['type']
         modules['degree'] = 10
-        lst.append(d['Long'])
-        lst.append(d['Lat'])
+        longVal = d['Long']
+        latVal = d['Lat']
+        if('module_type' in values):
+        	if(values['module_type'] == 'mcu'):
+        		longVal = longVal / 1000000
+        		latVal = latVal / 1000000
+        lst.append(longVal)
+        lst.append(latVal)
         modules['coords'] = lst
         client.connect("127.0.0.1")
         client.publish("id", json.dumps(modules).encode(), 0)
