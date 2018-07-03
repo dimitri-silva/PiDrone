@@ -58,8 +58,8 @@ def runServer():
         modules['degree'] = 10
         longVal = d['Long']
         latVal = d['Lat']
-        if('module_type' in values):
-        	if(values['module_type'] == 'mcu'):
+        if('module_type' in d):
+        	if(d['module_type'] == 'mcu'):
         		longVal = longVal / 1000000
         		latVal = latVal / 1000000
         lst.append(longVal)
