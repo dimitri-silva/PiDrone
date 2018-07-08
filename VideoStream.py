@@ -23,24 +23,25 @@ class CameraBuffer:
 class VideoCapture(threading.Thread):
     # Connect a client socket to my_server:8000 (change my_server to the
     # hostname of your server)
-    def __init__(self, dest, group=None, target=None, name=None, verbose=None, port=10000):
+    def __init__(self, config, group=None, target=None, name=None):
         super().__init__(group=group, target=target, name=name)
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.DEST = (dest, port)
+        self.config = config
+        self.DEST = (config["GroundStation_IP"], int(config["video-live"]["Port"]))
         self.recording = False
         self.recordingLaunch = False
         self.launchName = None
         self.camera = picamera.PiCamera()
-        self.camera.resolution = (1280, 720)
-        self.camera.framerate = 15
+        self.camera.resolution = (int(config["video-main"]["Width"]), int(config["video-main"]["Height"]))
+        self.camera.framerate = int(config["video-main"]["Framerate"])
         self.outputStream = CameraBuffer(self.server_socket, self.DEST)
         self.semSocket = threading.Lock()
         self.launchDataThread = False
 
     def run(self):
         try:
-            self.camera.start_recording(self.outputStream, format='h264', splitter_port=2, resize=(854, 480),
-                                        bitrate=500000)
+            self.camera.start_recording(self.outputStream, format='h264', splitter_port=2, resize=(int(self.config["video-live"]["Width"]), int(self.config["video-live"]["Height"])),
+                                        bitrate=int(self.config["video-live"]["Bitrate"])*1000000)
             print('Video Stream Started')
             self.camera.wait_recording(1000000, splitter_port=2)
         finally:
@@ -66,8 +67,8 @@ class VideoCapture(threading.Thread):
 
     def record(self, name):
         if not self.recording:
-            self.camera.start_recording("Videos/" + name + '.h264', splitter_port=1, format='h264',
-                                        bitrate=3000000)
+            self.camera.start_recording("Videos/" + name + '.h264', splitter_port=1, format='h264',resize=(int(self.config["video-main"]["Width"]), int(self.config["video-main"]["Height"])),
+                                        bitrate=int(self.config["video-main"]["Bitrate"])*1000000)
             self.recording = True
             return True
         return False
@@ -82,8 +83,8 @@ class VideoCapture(threading.Thread):
     def recordLaunch(self, name):
         msp = MSP()
         if not self.recordingLaunch:
-            self.camera.start_recording(name + '.h264', splitter_port=3, format='h264',
-                                        bitrate=5000000)
+            self.camera.start_recording(name + '.h264', splitter_port=3, format='h264',resize=(int(self.config["video-recording-launch"]["Width"]), int(self.config["video-recording-launch"]["Height"])),
+                                        bitrate=int(self.config["video-recording-launch"]["Bitrate"])*1000000)
             self.launchName = name
             self.recordingLaunch = True
             return True

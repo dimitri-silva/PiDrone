@@ -9,6 +9,7 @@ import UdpController
 import memcache
 from droneDataBroker import droneDataBroker
 import ColorDetection
+import configparser
 
 class Video(threading.Thread):
     def __init__(self, on_message, on_publish):
@@ -148,15 +149,16 @@ class UDPServerThread(threading.Thread):
 
 
 if __name__ == '__main__':
-
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+    print(config)
     #MSP_Thread.start_sending()
     #controller = ControllerThread()
     #controller.start()
     server = UDPServerThread()
     server.start()
     print('██▓███   ██▓▓█████▄  ██▀███   ▒█████   ███▄    █ ▓█████\n▓██░  ██▒▓██▒▒██▀ ██▌▓██ ▒ ██▒▒██▒  ██▒ ██ ▀█   █ ▓█   ▀\n▓██░ ██▓▒▒██▒░██   █▌▓██ ░▄█ ▒▒██░  ██▒▓██  ▀█ ██▒▒███\n▒██▄█▓▒ ▒░██░░▓█▄   ▌▒██▀▀█▄  ▒██   ██░▓██▒  ▐▌██▒▒▓█  ▄\n▒██▒ ░  ░░██░░▒████▓ ░██▓ ▒██▒░ ████▓▒░▒██░   ▓██░░▒████▒\n▒▓▒░ ░  ░░▓   ▒▒▓  ▒ ░ ▒▓ ░▒▓░░ ▒░▒░▒░ ░ ▒░   ▒ ▒ ░░ ▒░ ░\n░▒ ░      ▒ ░ ░ ▒  ▒   ░▒ ░ ▒░  ░ ▒ ▒░ ░ ░░   ░ ▒░ ░ ░  ░\n░░        ▒ ░ ░ ░  ░   ░░   ░ ░ ░ ░ ▒     ░   ░ ░    ░\n░     ░       ░         ░ ░           ░    ░  ░\n░')
-    GS_IP = '192.168.1.103'
-    cap = VideoCapture(GS_IP)
+    cap = VideoCapture(config)
     cap.start()
     video = Video(on_message_video, on_publish)
     video.start()
