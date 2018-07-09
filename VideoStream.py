@@ -182,6 +182,7 @@ class VideoCapture(threading.Thread):
         requestsPerSecond = int(self.config["video-recording-launch"]["DataReadingsPerSecond"])
         info = {}
         while True:
+            time.sleep(1 / requestsPerSecond)
             data = getDroneData(msp)
             info["timestamp"] = timestamp
             timestamp += 1
@@ -200,7 +201,6 @@ class VideoCapture(threading.Thread):
             info["gpsData"] = gps
             #print(gps)
             yield (info)
-            time.sleep(1 / requestsPerSecond)
 
     def launchData(self, name, client):
         if not self.launchDataThread:
