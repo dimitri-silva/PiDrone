@@ -31,7 +31,7 @@ class VideoCapture(threading.Thread):
         self.recording = False
         self.recordingLaunch = False
         self.launchName = None
-        self.camera = picamera.PiCamera(sensor_mode=int(config["video-main"]["Width"]))
+        self.camera = picamera.PiCamera(sensor_mode=int(config["video-main"]["Sensor_Mode"]))
         self.camera.resolution = (int(config["video-main"]["Width"]), int(config["video-main"]["Height"]))
         self.camera.framerate = int(config["video-main"]["Framerate"])
         self.camera.exposure_mode = 'sports'
