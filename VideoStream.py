@@ -102,8 +102,11 @@ class VideoCapture(threading.Thread):
         return None
 
     def sendFile(self, name):
-        t = threading.Thread(target=self.sendFileAssist, args=(name,))
-        t.start()
+        try:
+            t = threading.Thread(target=self.sendFileAssist, args=(name,))
+            t.start()
+        except:
+            pass
 
     def sendFileAssist(self, name):
         print('Binding socket for file transmission')
@@ -152,19 +155,25 @@ class VideoCapture(threading.Thread):
         return [f.split('.')[0] for f in videos], storage
 
     def processVideo(self, name):
-        os.system('mv Videos/' + name + '.h264 Processing/Videos/' + name + '.h264')
-        ff = ffmpy.FFmpeg(global_options='-framerate ' + self.config["video-main"]["Framerate"] +' -y',
-                          inputs={'Processing/Videos/' + name + '.h264': None},
-                          outputs={'Processing/' + name + '.mp4': '-c:v copy -f mp4'})
-        ff.run()
-        os.system('rm Processing/Videos/' + name + '.h264')
+        try:
+            os.system('mv Videos/' + name + '.h264 Processing/Videos/' + name + '.h264')
+            ff = ffmpy.FFmpeg(global_options='-framerate ' + self.config["video-main"]["Framerate"] +' -y',
+                              inputs={'Processing/Videos/' + name + '.h264': None},
+                              outputs={'Processing/' + name + '.mp4': '-c:v copy -f mp4'})
+            ff.run()
+            os.system('rm Processing/Videos/' + name + '.h264')
+        except:
+            pass
 
     def processVideoLaunch(self, name):
-        ff = ffmpy.FFmpeg(global_options='-framerate '+ self.config["video-main"]["Framerate"] +' -y',
-                          inputs={name + '.h264': None},
-                          outputs={name + '.mp4': '-c:v copy -f mp4'})
-        ff.run()
-        os.system('rm ' + name + '.h264')
+        try:
+            ff = ffmpy.FFmpeg(global_options='-framerate '+ self.config["video-main"]["Framerate"] +' -y',
+                              inputs={name + '.h264': None},
+                              outputs={name + '.mp4': '-c:v copy -f mp4'})
+            ff.run()
+            os.system('rm ' + name + '.h264')
+        except:
+            pass
 
     def launchDataGenerator(self, name):
         msp = MSP()
