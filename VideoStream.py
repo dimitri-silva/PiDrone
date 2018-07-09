@@ -152,14 +152,14 @@ class VideoCapture(threading.Thread):
 
     def processVideo(self, name):
         os.system('mv Videos/' + name + '.h264 Processing/Videos/' + name + '.h264')
-        ff = ffmpy.FFmpeg(global_options='-framerate ' + int(self.config["video-main"]["Framerate"]) +' -y',
+        ff = ffmpy.FFmpeg(global_options='-framerate ' + self.config["video-main"]["Framerate"] +' -y',
                           inputs={'Processing/Videos/' + name + '.h264': None},
                           outputs={'Processing/' + name + '.mp4': '-c:v copy -f mp4'})
         ff.run()
         os.system('rm Processing/Videos' + name + '.h264')
 
     def processVideoLaunch(self, name):
-        ff = ffmpy.FFmpeg(global_options='-framerate '+ int(self.config["video-main"]["Framerate"]) +' -y',
+        ff = ffmpy.FFmpeg(global_options='-framerate '+ self.config["video-main"]["Framerate"] +' -y',
                           inputs={name + '.h264': None},
                           outputs={name + '.mp4': '-c:v copy -f mp4'})
         ff.run()
