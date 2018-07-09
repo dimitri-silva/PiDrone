@@ -25,7 +25,7 @@ class droneDataBroker(threading.Thread):
         i=74
         while True:
             data = getDroneData(msp)
-            time.sleep(2)
+            time.sleep(1)
             info["module_type"]='droneInfo'
             info["type"]="drone"
             info["btl"]=str(i)
