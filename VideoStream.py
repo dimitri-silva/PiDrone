@@ -27,7 +27,7 @@ class VideoCapture(threading.Thread):
         super().__init__(group=group, target=target, name=name)
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.config = config
-        self.DEST = (config["GroundStation_IP"], int(config["video-live"]["Port"]))
+        self.DEST = (config["DEFAULT"]["GroundStation_IP"], int(config["video-live"]["Port"]))
         self.recording = False
         self.recordingLaunch = False
         self.launchName = None

@@ -151,7 +151,6 @@ class UDPServerThread(threading.Thread):
 if __name__ == '__main__':
     config = configparser.ConfigParser()
     config.read('config.ini')
-    print(str(config))
     #MSP_Thread.start_sending()
     #controller = ControllerThread()
     #controller.start()
