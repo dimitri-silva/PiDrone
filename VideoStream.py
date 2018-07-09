@@ -31,7 +31,7 @@ class VideoCapture(threading.Thread):
         self.recording = False
         self.recordingLaunch = False
         self.launchName = None
-        self.camera = picamera.PiCamera()
+        self.camera = picamera.PiCamera(sensor_mode=0)
         self.camera.resolution = (int(config["video-main"]["Width"]), int(config["video-main"]["Height"]))
         self.camera.framerate = int(config["video-main"]["Framerate"])
         self.outputStream = CameraBuffer(self.server_socket, self.DEST)
@@ -115,7 +115,6 @@ class VideoCapture(threading.Thread):
         print('Starting video transmission')
         f = open(name, 'rb')
         conn.send(name.split("/")[-1].encode())
-        print(name)
         l = f.read(1024)
         while (l):
             conn.send(l)
@@ -186,7 +185,6 @@ class VideoCapture(threading.Thread):
             info["type"] = 'launch_data'
             gpsData = mc.get("data")
             gps = []
-            print(gpsData)
             if gpsData:
                 gps = [[str(k), gpsData[k]] for k in gpsData]
             info["gpsData"] = gps
