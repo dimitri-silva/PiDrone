@@ -31,7 +31,7 @@ class VideoCapture(threading.Thread):
         self.recording = False
         self.recordingLaunch = False
         self.launchName = None
-        self.camera = picamera.PiCamera()
+        self.camera = picamera.PiCamera(sensor_mode=1)
         self.camera.resolution = (int(config["video-main"]["Width"]), int(config["video-main"]["Height"]))
         self.camera.framerate = int(config["video-main"]["Framerate"])
         self.outputStream = CameraBuffer(self.server_socket, self.DEST)
@@ -156,7 +156,7 @@ class VideoCapture(threading.Thread):
                           inputs={'Processing/Videos/' + name + '.h264': None},
                           outputs={'Processing/' + name + '.mp4': '-c:v copy -f mp4'})
         ff.run()
-        os.system('rm Processing/Videos' + name + '.h264')
+        os.system('rm Processing/Videos/' + name + '.h264')
 
     def processVideoLaunch(self, name):
         ff = ffmpy.FFmpeg(global_options='-framerate '+ self.config["video-main"]["Framerate"] +' -y',
