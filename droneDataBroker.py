@@ -25,7 +25,6 @@ class droneDataBroker(threading.Thread):
         i=74
         while True:
             data = getDroneData(msp)
-            time.sleep(1)
             info["module_type"]='droneInfo'
             info["type"]="drone"
             info["btl"]=str(i)
@@ -39,3 +38,4 @@ class droneDataBroker(threading.Thread):
             info["coords"]=(data["Lat"],data["Long"])
             client.publish("droneInfo", json.dumps(info).encode(), 0,retain=True)
             ip="192.168.1.103"
+            time.sleep(1)
