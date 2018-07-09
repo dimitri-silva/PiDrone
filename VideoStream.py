@@ -41,7 +41,7 @@ class VideoCapture(threading.Thread):
     def run(self):
         try:
             self.camera.start_recording(self.outputStream, format='h264', splitter_port=2, resize=(int(self.config["video-live"]["Width"]), int(self.config["video-live"]["Height"])),
-                                        bitrate=int(self.config["video-live"]["Bitrate"])*1000000)
+                                        bitrate=int(float(self.config["video-live"]["Bitrate"])*1000000))
             print('Video Stream Started')
             self.camera.wait_recording(1000000, splitter_port=2)
         finally:
@@ -68,7 +68,7 @@ class VideoCapture(threading.Thread):
     def record(self, name):
         if not self.recording:
             self.camera.start_recording("Videos/" + name + '.h264', splitter_port=1, format='h264',resize=(int(self.config["video-main"]["Width"]), int(self.config["video-main"]["Height"])),
-                                        bitrate=int(self.config["video-main"]["Bitrate"])*1000000)
+                                        bitrate=int(float(self.config["video-main"]["Bitrate"])*1000000))
             self.recording = True
             return True
         return False
@@ -84,7 +84,7 @@ class VideoCapture(threading.Thread):
         msp = MSP()
         if not self.recordingLaunch:
             self.camera.start_recording(name + '.h264', splitter_port=3, format='h264',resize=(int(self.config["video-recording-launch"]["Width"]), int(self.config["video-recording-launch"]["Height"])),
-                                        bitrate=int(self.config["video-recording-launch"]["Bitrate"])*1000000)
+                                        bitrate=int(float(self.config["video-recording-launch"]["Bitrate"])*1000000))
             self.launchName = name
             self.recordingLaunch = True
             return True
