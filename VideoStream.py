@@ -60,9 +60,9 @@ class VideoCapture(threading.Thread):
         print('Video Stream Stopped')
 
     def readFrame(self):
-        image = numpy.empty((720 * 1280 * 3,), dtype=numpy.uint8)
+        image = numpy.empty((int(self.config["image-processing"]["Height"]) * int(self.config["image-processing"]["Width"]) * 3,), dtype=numpy.uint8)
         self.camera.capture(image, 'bgr')
-        image = image.reshape((720, 1280, 3))
+        image = image.reshape((int(self.config["image-processing"]["Height"]), int(self.config["image-processing"]["Width"]), 3))
         return image
 
     def record(self, name):
@@ -105,7 +105,6 @@ class VideoCapture(threading.Thread):
         t.start()
 
     def sendFileAssist(self, name):
-        print(name)
         print('Binding socket for file transmission')
         self.semSocket.acquire()
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -154,14 +153,14 @@ class VideoCapture(threading.Thread):
 
     def processVideo(self, name):
         os.system('mv Videos/' + name + '.h264 Processing/Videos/' + name + '.h264')
-        ff = ffmpy.FFmpeg(global_options='-framerate 15 -y',
+        ff = ffmpy.FFmpeg(global_options='-framerate ' + int(self.config["video-main"]["Framerate"]) +' -y',
                           inputs={'Processing/Videos/' + name + '.h264': None},
                           outputs={'Processing/' + name + '.mp4': '-c:v copy -f mp4'})
         ff.run()
         os.system('rm Processing/Videos' + name + '.h264')
 
     def processVideoLaunch(self, name):
-        ff = ffmpy.FFmpeg(global_options='-framerate 15 -y',
+        ff = ffmpy.FFmpeg(global_options='-framerate '+ int(self.config["video-main"]["Framerate"]) +' -y',
                           inputs={name + '.h264': None},
                           outputs={name + '.mp4': '-c:v copy -f mp4'})
         ff.run()
@@ -171,7 +170,7 @@ class VideoCapture(threading.Thread):
         msp = MSP()
         mc = memcache.Client(['127.0.0.1:11211'], debug=0)
         timestamp = 0
-        requestsPerSecond = 4
+        requestsPerSecond = int(self.config["video-recording-launch"]["DataReadingsPerSecond"])
         info = {}
         while True:
             data = getDroneData(msp)
