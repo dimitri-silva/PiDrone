@@ -20,10 +20,6 @@ def send_msp(msp, function, payload=[]):
     data=msp.MSP_message(dict)
     return data
 
-def send_msp_mock(msp, function, payload=[]):
-    dict = {"payload": payload, "function": function}
-    data=msp.MSP_message_mock(dict)
-    return data
 
 def getDroneData(msp):
     dict = send_msp(msp, 108)
@@ -38,11 +34,6 @@ def getDroneData(msp):
     droneData["alt"]=dict3['alt']/100
     return droneData
 
-def getDroneDataMock(msp):
-    dict = send_msp_mock(msp, 108)
-    dict2 = send_msp_mock(msp, 106)
-    dict3 = send_msp_mock(msp, 109)
-    return dict3
 
 def follow_boat_loop(msp,boatGps,altitude=15,heading=0):
     payload=payloadStart+[boatGps[0],boatGps[1],altitude,heading]+payloadEnd
@@ -90,69 +81,7 @@ def go_to_buoy(msp, buoy_id,altitude,heading=0):
         data=send_msp(msp,209,payload=payload)
 
 
-def send_drone_data(msp,host="192.168.4.1", port=2000):
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect((host, port))
-    while True:
-        try:
-            data = getDroneData(msp)
-            s.send(json.dumps(data).encode())
-        except socket.error as msg:
-            print("Couldnt connect with the udp-server: %s\n terminating program" % msg)
 
-def send_boat_id(msp, data,host="192.168.4.1", port=2000):
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect((host, port))
-    while True:
-        try:
-            s.send(json.dumps(data).encode())
-        except socket.error as msg:
-            print("Couldnt connect with the udp-server: %s\n terminating program" % msg)
-
-
-def send_drone_data_mock(msp,host="192.168.4.1", port=2000):
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.connect((host, port))
-    while True:
-        try:
-            data = getDroneDataMock(msp)
-            s.send(json.dumps(data).encode())
-        except socket.error as msg:
-            print("Couldnt connect with the udp-server: %s\n terminating program" % msg)
-
-
-def drone_test(msp):
-    #point = (406330520, -86467080)
-    #payload = payloadStart + [point[0], point[1], 15, 0] + payloadEnd
-    payload = payload_base
-    payload['lat']=406330520
-    payload['lon'] = -86467080
-    payload['alt_hold'] = 15
-    payload['heading']=0
-    data = send_msp(msp, 209, payload=payload)
-    print(data)
-    while True:
-        time.sleep(0.1)
-        data = send_msp(msp, 104, payload=[])
-        print(data)
-
-def drone_test2(msp):
-    data = send_msp(msp, 104, payload=[])
-    print(data)
-
-def start_sending():
-    msp = MSP()
-    t = threading.Thread(target=send_drone_data, args=(msp,))
-    t.start()
-
-"""
-msp=MSP(mock=True)
-t=threading.Thread(target=send_drone_data_mock,args=(msp,))
-t.start()
-t.join()
-"""
-#t=threading.Thread(target=drone_test,args=(msp,))
-#t.start()
 
 
 
